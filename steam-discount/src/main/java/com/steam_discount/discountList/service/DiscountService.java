@@ -17,6 +17,10 @@ public class DiscountService {
     private final SteamDiscountCrawling steamDiscountCrawling;
 
 
+    public List<Discount> findAllDiscoutList() {
+        return discountRepository.findAll();
+    }
+
     @Transactional
     public void crawlingDiscountListAndSave(){
         List<Discount> discountList = steamDiscountCrawling.getDiscountList();
