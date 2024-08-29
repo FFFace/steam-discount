@@ -1,4 +1,4 @@
-package com.steam_discount.entity.discountList;
+package com.steam_discount.discountList.entity;
 
 
 import jakarta.persistence.Column;

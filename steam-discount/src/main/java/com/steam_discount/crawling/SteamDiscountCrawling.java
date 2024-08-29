@@ -31,7 +31,7 @@ public class SteamDiscountCrawling {
         driver = new ChromeDriver(options);
     }
 
-    public void activate(){
+    public void crawling(){
         try{
             driver.get(url);
             Thread.sleep(2000);
