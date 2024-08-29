@@ -8,11 +8,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Getter
-@Table(name = "discount_list")
-public class DiscountList {
+@Setter
+@Table(name = "discount")
+public class Discount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,4 +33,7 @@ public class DiscountList {
 
     @Column
     private String discountPercent;
+
+    @Column
+    private String image;
 }
