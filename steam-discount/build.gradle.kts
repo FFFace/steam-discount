@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.steam-discount"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 
 java {
 	toolchain {
@@ -32,7 +32,7 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
-	implementation("org.seleniumhq.selenium:selenium-java:4.23.1")
+	implementation("org.seleniumhq.selenium:selenium-java:4.24.0")
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
