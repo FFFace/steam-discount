@@ -1,4 +1,4 @@
-package com.steam_discount.user;
+package com.steam_discount.user.entity;
 
 
 import jakarta.persistence.Column;
