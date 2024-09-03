@@ -3,6 +3,8 @@ package com.steam_discount.user.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,6 +40,9 @@ public class User {
 
     @Column
     private String productId;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     public User(String email, String password, String nickname, String product, String productId){
         this.email = email;
