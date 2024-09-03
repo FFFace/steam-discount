@@ -26,10 +26,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String email;
 
-    @Column
+    @Column(nullable = false)
     private String password;
 
     @Column
@@ -42,13 +42,15 @@ public class User {
     private String productId;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private UserRole role;
 
-    public User(String email, String password, String nickname, String product, String productId){
+    public User(String email, String password, String nickname, String product, String productId, UserRole role){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.product = product;
         this.productId = productId;
+        this.role = role;
     }
 }
