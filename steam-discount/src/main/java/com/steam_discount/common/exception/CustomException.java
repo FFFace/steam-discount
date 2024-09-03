@@ -2,14 +2,18 @@ package com.steam_discount.common.exception;
 
 import com.steam_discount.common.exception.errorCode.ErrorCode;
 import lombok.Getter;
+import org.springframework.http.ResponseEntity;
 
-@Getter
 public class CustomException extends RuntimeException{
 
-    private ErrorCode errorCode;
+    private final ErrorCode errorCode;
 
     public CustomException(ErrorCode errorCode){
         super(errorCode.getErrorName());
         this.errorCode = errorCode;
+    }
+
+    public ResponseException toResponse(){
+        return new ResponseException(errorCode);
     }
 }
