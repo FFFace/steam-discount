@@ -7,13 +7,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.checkerframework.checker.units.qual.C;
 
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "user")
 public class User {
     @Id
@@ -34,4 +38,12 @@ public class User {
 
     @Column
     private String productId;
+
+    public User(String email, String password, String nickname, String product, String productId){
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.product = product;
+        this.productId = productId;
+    }
 }
