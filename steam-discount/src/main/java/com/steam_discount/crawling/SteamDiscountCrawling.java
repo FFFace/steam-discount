@@ -35,7 +35,6 @@ public class SteamDiscountCrawling {
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--disable-images");
         options.addArguments("--blink-settings=imagesEnabled=false");
-        System.out.println("ChromeDriver Setting End");
 
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.MINUTES);
