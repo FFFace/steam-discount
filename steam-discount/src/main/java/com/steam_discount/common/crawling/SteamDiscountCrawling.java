@@ -1,4 +1,4 @@
-package com.steam_discount.crawling;
+package com.steam_discount.common.crawling;
 
 
 import com.steam_discount.discountList.entity.Discount;

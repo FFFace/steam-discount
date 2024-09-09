@@ -1,7 +1,7 @@
 package com.steam_discount.discountList.service;
 
 
-import com.steam_discount.crawling.SteamDiscountCrawling;
+import com.steam_discount.common.crawling.SteamDiscountCrawling;
 import com.steam_discount.discountList.entity.Discount;
 import com.steam_discount.discountList.repository.DiscountRepository;
 import jakarta.transaction.Transactional;
