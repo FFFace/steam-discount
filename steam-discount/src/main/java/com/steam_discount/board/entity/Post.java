@@ -5,11 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.bytebuddy.agent.builder.AgentBuilder.LambdaInstrumentationStrategy;
 
 @Entity
 @Getter
@@ -39,4 +43,7 @@ public class Post {
 
     @Column
     private Integer thumbsDown;
+
+    @OneToMany(mappedBy = "post")
+    private List<Comment> commentList;
 }
