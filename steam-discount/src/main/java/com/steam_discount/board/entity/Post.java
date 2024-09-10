@@ -1,5 +1,6 @@
 package com.steam_discount.board.entity;
 
+import com.steam_discount.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,7 +22,7 @@ import net.bytebuddy.agent.builder.AgentBuilder.LambdaInstrumentationStrategy;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "post")
-public class Post {
+public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
