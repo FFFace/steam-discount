@@ -49,6 +49,12 @@ public class User {
     private UserRole role;
 
     @Column
+    private Character verify;
+
+    @Column
+    private String verifyCode;
+
+    @Column
     private LocalDateTime createdAt;
 
     @PrePersist
@@ -63,5 +69,6 @@ public class User {
         this.product = product;
         this.productId = productId;
         this.role = role;
+        verify = 'F';
     }
 }
