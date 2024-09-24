@@ -73,12 +73,4 @@ public class JwtUtil {
             return false;
         }
     }
-
-    public String getTokenToBearerToken(String bearerToken){
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-
-        return bearerToken;
-    }
 }
