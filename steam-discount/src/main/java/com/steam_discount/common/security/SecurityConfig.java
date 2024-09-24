@@ -28,8 +28,6 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource())); // NOTE : CORS
         http.formLogin(AbstractHttpConfigurer::disable);
 
-        http.authorizeHttpRequests(authorize -> authorize
-            .requestMatchers())
 
         http.authorizeHttpRequests(authorize -> authorize
             .anyRequest().permitAll());
