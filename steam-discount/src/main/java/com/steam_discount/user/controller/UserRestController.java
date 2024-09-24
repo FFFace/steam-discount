@@ -1,13 +1,17 @@
 package com.steam_discount.user.controller;
 
 
+import com.steam_discount.user.entity.Login;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserDTO;
 import com.steam_discount.user.entity.VerifyEmail;
 import com.steam_discount.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,12 +46,17 @@ public class UserRestController {
     }
 
     @PostMapping("/duplicate-email")
-    public ResponseEntity<Boolean> duplicateUserEmail(@RequestBody String email){
-        return ResponseEntity.ok(userService.duplicateUserEmail(email));
+    public ResponseEntity<Boolean> duplicateUserEmail(@RequestBody Map<String, String> map){
+        return ResponseEntity.ok(userService.duplicateUserEmail(map.get("email")));
     }
 
     @PostMapping("/duplicate-nickname")
-    public ResponseEntity<Boolean> duplicateUserNickname(@RequestBody String nickname){
-        return ResponseEntity.ok(userService.duplicateUserNickname(nickname));
+    public ResponseEntity<Boolean> duplicateUserNickname(@RequestBody Map<String, String> map){
+        return ResponseEntity.ok(userService.duplicateUserNickname(map.get("nickname")));
+    }
+
+    @PostMapping("/login")
+    public void login(@RequestBody Login login, HttpServletResponse response){
+        userService.login(login, response);
     }
 }
