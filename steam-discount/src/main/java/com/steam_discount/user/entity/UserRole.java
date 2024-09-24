@@ -9,9 +9,9 @@ public enum UserRole {
     ADMIN("ROLE_ADMIN");
 
 
-    private final String role;
+    private final String name;
 
-    UserRole(String role) {
-        this.role = role;
+    UserRole(String name) {
+        this.name = name;
     }
 }

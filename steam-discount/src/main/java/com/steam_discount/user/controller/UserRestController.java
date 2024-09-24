@@ -40,4 +40,14 @@ public class UserRestController {
     public ResponseEntity<Boolean> verifyUserEmail(@RequestBody VerifyEmail verify){
         return ResponseEntity.ok(userService.verifiedCode(verify.getEmail(), verify.getCode()));
     }
+
+    @PostMapping("/duplicate-email")
+    public ResponseEntity<Boolean> duplicateUserEmail(@RequestBody String email){
+        return ResponseEntity.ok(userService.duplicateUserEmail(email));
+    }
+
+    @PostMapping("/duplicate-nickname")
+    public ResponseEntity<Boolean> duplicateUserNickname(@RequestBody String nickname){
+        return ResponseEntity.ok(userService.duplicateUserNickname(nickname));
+    }
 }

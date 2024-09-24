@@ -87,6 +87,14 @@ public class UserService {
         return true;
     }
 
+    public boolean duplicateUserEmail(String email){
+        return userRepository.findByEmail(email).isEmpty();
+    }
+
+    public boolean duplicateUserNickname(String nickname){
+        return userRepository.findByNickname(nickname).isEmpty();
+    }
+
     public void deleteUser(User user){
         userRepository.delete(user);
     }
