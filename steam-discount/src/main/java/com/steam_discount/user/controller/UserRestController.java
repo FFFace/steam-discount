@@ -1,6 +1,7 @@
 package com.steam_discount.user.controller;
 
 
+import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.user.entity.Login;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserDTO;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserRestController {
 
     private final UserService userService;
@@ -53,10 +55,5 @@ public class UserRestController {
     @PostMapping("/duplicate-nickname")
     public ResponseEntity<Boolean> duplicateUserNickname(@RequestBody Map<String, String> map){
         return ResponseEntity.ok(userService.duplicateUserNickname(map.get("nickname")));
-    }
-
-    @PostMapping("/login")
-    public void login(@RequestBody Login login, HttpServletResponse response){
-        userService.login(login, response);
     }
 }
