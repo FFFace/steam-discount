@@ -125,11 +125,16 @@ public class UserService {
         if(!passwordMatch(user, login.getPassword()))
             throw new CustomException(ErrorCode.NOT_MATCH_PASSWORD);
 
+        if(user.getVerify() == 'F'){
+            throw new CustomException(ErrorCode.NOT_VERIFY_EMAIL);
+        }
+
         createNewToken(login.getEmail(), response);
     }
 
     private void createNewToken(String email, HttpServletResponse response){
         String accessToken = jwtUtil.generateAccessToken(email);
+
         response.setHeader(jwtUtil.ACCESS_TOKEN_HEADER_NAME, accessToken);
 
         String refreshToken = jwtUtil.generateRefreshToken(email);
@@ -140,7 +145,9 @@ public class UserService {
         cookie.setSecure(true);
 
         response.addCookie(cookie);
-        RefreshToken dbToken = new RefreshToken(refreshToken, email);
+        RefreshToken dbToken = refreshTokenRepository.findByEmail(email).orElse(new RefreshToken());
+        dbToken.setEmail(email);
+        dbToken.setToken(refreshToken);
 
         refreshTokenRepository.save(dbToken);
     }
