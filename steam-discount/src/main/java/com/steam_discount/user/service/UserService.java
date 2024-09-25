@@ -5,8 +5,10 @@ import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.common.security.jwt.JwtUtil;
 import com.steam_discount.common.smtp.MailService;
 import com.steam_discount.user.entity.Login;
+import com.steam_discount.user.entity.RefreshToken;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserDTO;
+import com.steam_discount.user.repository.RefreshTokenRepository;
 import com.steam_discount.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +27,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
     private static final String AUTO_CODE_PREFIX = "AuthCode ";
     private final MailService mailService;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Value("${spring.mail.auth-code-expiration-millis}")
     private Long authCodeExpirationMillis;
@@ -121,8 +125,23 @@ public class UserService {
         if(!passwordMatch(user, login.getPassword()))
             throw new CustomException(ErrorCode.NOT_MATCH_PASSWORD);
 
-        String accessToken = jwtUtil.generateAccessToken(user.getEmail());
+        createNewToken(login.getEmail(), response);
+    }
 
+    private void createNewToken(String email, HttpServletResponse response){
+        String accessToken = jwtUtil.generateAccessToken(email);
+        response.setHeader(jwtUtil.ACCESS_TOKEN_HEADER_NAME, accessToken);
 
+        String refreshToken = jwtUtil.generateRefreshToken(email);
+        Cookie cookie = new Cookie(jwtUtil.REFRESH_TOKEN_COOKIE_NAME, refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(jwtUtil.REFRESH_TOKEN_COOKIE_MAX_AGE);
+        cookie.setSecure(true);
+
+        response.addCookie(cookie);
+        RefreshToken dbToken = new RefreshToken(refreshToken, email);
+
+        refreshTokenRepository.save(dbToken);
     }
 }

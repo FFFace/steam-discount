@@ -18,6 +18,7 @@ public class JwtUtil {
     private Long expiration;
 
     public final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
+    public final String ACCESS_TOKEN_HEADER_NAME = "Authorization";
     public final int REFRESH_TOKEN_COOKIE_MAX_AGE = 60 * 60 * 24 *7;
     public final Long REFRESH_TOKEN_EXPIRE_TIME_MS = 1000L * 60 * 60 * 24 * 7;
 
