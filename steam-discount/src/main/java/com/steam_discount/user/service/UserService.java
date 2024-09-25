@@ -3,6 +3,7 @@ package com.steam_discount.user.service;
 import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.common.security.jwt.JwtUtil;
+import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.common.smtp.MailService;
 import com.steam_discount.user.entity.Login;
 import com.steam_discount.user.entity.RefreshToken;
@@ -132,6 +133,13 @@ public class UserService {
         createNewToken(login.getEmail(), response);
     }
 
+    public void logout(User user){
+        RefreshToken refreshToken = refreshTokenRepository.findByEmail(user.getEmail()).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_REFRESH_TOKEN));
+
+        refreshTokenRepository.delete(refreshToken);
+    }
+
     private void createNewToken(String email, HttpServletResponse response){
         String accessToken = jwtUtil.generateAccessToken(email);
 
@@ -145,10 +153,17 @@ public class UserService {
         cookie.setSecure(true);
 
         response.addCookie(cookie);
-        RefreshToken dbToken = refreshTokenRepository.findByEmail(email).orElse(new RefreshToken());
-        dbToken.setEmail(email);
-        dbToken.setToken(refreshToken);
 
-        refreshTokenRepository.save(dbToken);
+        saveRefreshToken(email, refreshToken);
+    }
+
+    // NOTE: 여기서부터 RefreshToken 관련 메소드
+
+    private void saveRefreshToken(String email, String token){
+        RefreshToken refreshToken = refreshTokenRepository.findByEmail(email).orElse(new RefreshToken());
+        refreshToken.setEmail(email);
+        refreshToken.setToken(token);
+
+        refreshTokenRepository.save(refreshToken);
     }
 }
