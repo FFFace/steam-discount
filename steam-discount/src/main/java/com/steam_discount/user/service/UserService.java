@@ -133,14 +133,17 @@ public class UserService {
         createNewToken(login.getEmail(), response);
     }
 
-    public void logout(User user, Cookie cookie, HttpServletResponse response){
+    public void logout(User user, HttpServletResponse response){
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(user.getEmail()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_REFRESH_TOKEN));
 
-        if(cookie != null) {
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        }
+        Cookie cookie = new Cookie(jwtUtil.REFRESH_TOKEN_COOKIE_NAME, null);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        cookie.setSecure(true);
+
+        response.addCookie(cookie);
 
         refreshTokenRepository.delete(refreshToken);
     }

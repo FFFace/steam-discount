@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,10 @@ public class LoginRestController {
     }
 
     @PostMapping("/logout")
-    public void logout(@AuthenticationPrincipal CustomUser customUser, @CookieValue(value = "token") Cookie cookie, HttpServletResponse response){
-        userService.logout(customUser.getUser(), cookie, response);
+    public void logout(@AuthenticationPrincipal CustomUser customUser, HttpServletResponse response){
+        userService.logout(customUser.getUser(), response);
     }
+
+    @GetMapping("/token-check")
+    public void tokenCheck(){}
 }

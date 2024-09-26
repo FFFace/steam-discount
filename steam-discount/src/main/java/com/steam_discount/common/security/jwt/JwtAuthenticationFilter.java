@@ -7,9 +7,11 @@ import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.common.security.jwt.user.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,16 +36,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         throws ServletException, IOException {
         String accessToken = request.getHeader("Authorization");
 
-        if (accessToken == null) {
-            filterChain.doFilter(request, response);
-            return;
+        if (accessToken == null || accessToken.equals("undefined")) {
+            Cookie[] cookies = request.getCookies();
+
+            if(cookies == null){
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            Cookie cookie = Arrays.stream(cookies).filter(c -> c.getName().equals("refreshToken")).findFirst().orElse(null);
+
+            String email = jwtUtil.getEmailFromRefreshToken(cookie.getValue());
+            accessToken = jwtUtil.generateAccessToken(email);
+
+            response.setHeader("Authorization", accessToken);
 
         } else if(!jwtUtil.validateAccessToken(accessToken)){
-            jwtExceptionHandler(response, ErrorCode.ACCESS_TOKEN_EXPIRED);
+//            jwtExceptionHandler(response, ErrorCode.ACCESS_TOKEN_EXPIRED);
+            filterChain.doFilter(request, response);
             return;
         }
 
-        accessToken(accessToken, request);
+        verifyAccessToken(accessToken, request);
 
         filterChain.doFilter(request, response);
     }
@@ -60,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private void accessToken(String token, HttpServletRequest request){
+    private void verifyAccessToken(String token, HttpServletRequest request){
         String email = jwtUtil.getEmailFromAccessToken(token);
 
         CustomUser user = (CustomUser) customUserDetailsService.loadUserByUsername(email);
