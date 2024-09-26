@@ -33,5 +33,7 @@ public class LoginRestController {
     }
 
     @GetMapping("/token-check")
-    public void tokenCheck(){}
+    public void tokenCheck(@AuthenticationPrincipal CustomUser customUser){
+
+    }
 }
