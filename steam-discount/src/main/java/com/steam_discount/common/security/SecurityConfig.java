@@ -2,6 +2,7 @@ package com.steam_discount.common.security;
 
 
 import com.steam_discount.common.security.jwt.JwtAuthenticationFilter;
+import com.steam_discount.user.entity.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,8 +29,9 @@ public class SecurityConfig {
         http.cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource())); // NOTE : CORS
         http.formLogin(AbstractHttpConfigurer::disable);
 
-
         http.authorizeHttpRequests(authorize -> authorize
+            .requestMatchers("/api/logout").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+            .requestMatchers("/api/token-check").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
             .anyRequest().permitAll());
 
 

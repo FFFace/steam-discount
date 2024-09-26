@@ -9,6 +9,7 @@ import com.steam_discount.user.entity.Login;
 import com.steam_discount.user.entity.RefreshToken;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserDTO;
+import com.steam_discount.user.entity.UserRole;
 import com.steam_discount.user.repository.RefreshTokenRepository;
 import com.steam_discount.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
@@ -103,6 +104,7 @@ public class UserService {
 
         user.setVerify('T');
         user.setVerifyCode("");
+        user.setRole(UserRole.USER);
         save(user);
         return true;
     }

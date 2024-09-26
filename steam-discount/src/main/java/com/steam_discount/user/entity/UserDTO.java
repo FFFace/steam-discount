@@ -19,6 +19,6 @@ public class UserDTO {
     private String productId;
 
     public User toEntity(){
-        return new User(email, password, nickname, product, productId, UserRole.USER);
+        return new User(email, password, nickname, product, productId, UserRole.HOLD);
     }
 }
