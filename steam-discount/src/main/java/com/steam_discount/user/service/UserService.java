@@ -133,9 +133,14 @@ public class UserService {
         createNewToken(login.getEmail(), response);
     }
 
-    public void logout(User user){
+    public void logout(User user, Cookie cookie, HttpServletResponse response){
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(user.getEmail()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_REFRESH_TOKEN));
+
+        if(cookie != null) {
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
 
         refreshTokenRepository.delete(refreshToken);
     }
