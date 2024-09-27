@@ -21,6 +21,10 @@ public class DiscountService {
         return discountRepository.findAll();
     }
 
+    public List<Discount> findRandomFive(){
+        return discountRepository.findRandomFive();
+    }
+
     @Transactional
     public void crawlingDiscountListAndSave(){
         List<Discount> discountList = steamDiscountCrawling.getDiscountList();

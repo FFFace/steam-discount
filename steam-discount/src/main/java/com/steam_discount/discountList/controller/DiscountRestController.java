@@ -24,4 +24,9 @@ public class DiscountRestController {
     public ResponseEntity<List<Discount>> getDiscountList(){
         return ResponseEntity.ok(discountService.findAllDiscoutList());
     }
+
+    @GetMapping("/discount-five")
+    public ResponseEntity<List<Discount>> getDiscountFive(){
+        return ResponseEntity.ok(discountService.findRandomFive());
+    }
 }
