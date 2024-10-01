@@ -1,5 +1,6 @@
 package com.steam_discount.board.entity;
 
+import com.steam_discount.board.entity.responseDTO.CommentResponseDTO;
 import com.steam_discount.common.entity.BaseEntity;
 import com.steam_discount.user.entity.User;
 import jakarta.persistence.Column;
@@ -36,9 +37,6 @@ public class Comment extends BaseEntity {
     private User writer;
 
     @Column
-    private String name;
-
-    @Column
     private String content;
 
     @Column
@@ -46,4 +44,19 @@ public class Comment extends BaseEntity {
 
     @Column
     private Integer thumbsDown;
+
+
+
+    public CommentResponseDTO toResponseDTO(){
+        CommentResponseDTO commentResponseDTO = new CommentResponseDTO();
+
+        commentResponseDTO.setId(id);
+        commentResponseDTO.setPostId(post.getId());
+        commentResponseDTO.setWriter(writer.getNickname());
+        commentResponseDTO.setContent(content);
+        commentResponseDTO.setThumbsUp(thumbsUp);
+        commentResponseDTO.setThumbsDown(thumbsDown);
+
+        return commentResponseDTO;
+    }
 }
