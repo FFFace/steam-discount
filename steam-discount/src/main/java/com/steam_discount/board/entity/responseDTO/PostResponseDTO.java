@@ -14,5 +14,5 @@ import lombok.Setter;
 public class PostResponseDTO {
 
     private String content;
-    private List<Comment> commentList;
+    private List<CommentResponseDTO> commentList;
 }
