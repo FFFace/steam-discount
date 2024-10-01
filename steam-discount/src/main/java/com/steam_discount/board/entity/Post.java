@@ -1,5 +1,6 @@
 package com.steam_discount.board.entity;
 
+import com.steam_discount.board.entity.responseDTO.CommentResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostResponseDTO;
 import com.steam_discount.common.entity.BaseEntity;
@@ -14,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -72,7 +74,13 @@ public class Post extends BaseEntity {
         PostResponseDTO postResponseDTO = new PostResponseDTO();
 
         postResponseDTO.setContent(content);
-        postResponseDTO.setCommentList(commentList);
+
+        List<CommentResponseDTO> commentResponseDTOList = new ArrayList<>();
+        for(Comment comment: commentList){
+            commentResponseDTOList.add(comment.toResponseDTO());
+        }
+
+        postResponseDTO.setCommentList(commentResponseDTOList);
 
         return postResponseDTO;
     }
