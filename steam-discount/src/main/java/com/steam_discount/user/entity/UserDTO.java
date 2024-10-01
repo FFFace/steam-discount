@@ -14,6 +14,7 @@ public class UserDTO {
     private String email;
     @NotBlank
     private String password;
+    @NotBlank
     private String nickname;
     private String product;
     private String productId;

@@ -8,6 +8,7 @@ import com.steam_discount.user.entity.UserDTO;
 import com.steam_discount.user.entity.VerifyEmail;
 import com.steam_discount.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class UserRestController {
     }
 
     @PostMapping
-    public void createUser(@RequestBody UserDTO userDTO){
+    public void createUser(@RequestBody @Valid UserDTO userDTO){
         userService.saveNewUser(userDTO);
     }
 
