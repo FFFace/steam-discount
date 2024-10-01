@@ -1,5 +1,6 @@
 package com.steam_discount.board.entity;
 
+import com.steam_discount.board.entity.responseDTO.PostPageResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostResponseDTO;
 import com.steam_discount.common.entity.BaseEntity;
 import com.steam_discount.user.entity.User;
@@ -55,15 +56,24 @@ public class Post extends BaseEntity {
 
 
 
-    public PostResponseDTO toResponseDTO(){
-        PostResponseDTO responseDTO = new PostResponseDTO();
+    public PostPageResponseDTO toPageResponseDTO(){
+        PostPageResponseDTO pageResponseDTO = new PostPageResponseDTO();
 
-        responseDTO.setWriter(writer.getNickname());
-        responseDTO.setName(name);
-        responseDTO.setContent(content);
-        responseDTO.setThumbsUp(thumbsUp);
-        responseDTO.setThumbsDown(thumbsDown);
+        pageResponseDTO.setId(id);
+        pageResponseDTO.setWriter(writer.getNickname());
+        pageResponseDTO.setName(name);
+        pageResponseDTO.setThumbsUp(thumbsUp);
+        pageResponseDTO.setThumbsDown(thumbsDown);
 
-        return responseDTO;
+        return pageResponseDTO;
+    }
+
+    public PostResponseDTO toPostResponseDTO(){
+        PostResponseDTO postResponseDTO = new PostResponseDTO();
+
+        postResponseDTO.setContent(content);
+        postResponseDTO.setCommentList(commentList);
+
+        return postResponseDTO;
     }
 }
