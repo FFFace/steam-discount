@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 public class PostPageDTO {
 
     @NotNull(message = "게시판을 입력해 주세요.")
-    private Long boardId;
+    private long boardId;
 
     @Min(0)
     private int page;
