@@ -31,12 +31,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtUtil jwtUtil;
-    private static final String AUTO_CODE_PREFIX = "AuthCode ";
+
     private final MailService mailService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    @Value("${spring.mail.auth-code-expiration-millis}")
-    private Long authCodeExpirationMillis;
 
     private String passwordEncode(String password){
         return passwordEncoder.encode(password);
@@ -139,7 +136,7 @@ public class UserService {
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(user.getEmail()).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_REFRESH_TOKEN));
 
-        Cookie cookie = new Cookie(jwtUtil.REFRESH_TOKEN_COOKIE_NAME, null);
+        Cookie cookie = new Cookie(jwtUtil.getREFRESH_TOKEN_COOKIE_NAME(), null);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(0);
@@ -153,13 +150,13 @@ public class UserService {
     private void createNewToken(String email, HttpServletResponse response){
         String accessToken = jwtUtil.generateAccessToken(email);
 
-        response.setHeader(jwtUtil.ACCESS_TOKEN_HEADER_NAME, accessToken);
+        response.setHeader(jwtUtil.getACCESS_TOKEN_HEADER_NAME(), accessToken);
 
         String refreshToken = jwtUtil.generateRefreshToken(email);
-        Cookie cookie = new Cookie(jwtUtil.REFRESH_TOKEN_COOKIE_NAME, refreshToken);
+        Cookie cookie = new Cookie(jwtUtil.getREFRESH_TOKEN_COOKIE_NAME(), refreshToken);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        cookie.setMaxAge(jwtUtil.REFRESH_TOKEN_COOKIE_MAX_AGE);
+        cookie.setMaxAge(jwtUtil.getRefreshCookieMaxAge());
         cookie.setSecure(true);
 
         response.addCookie(cookie);

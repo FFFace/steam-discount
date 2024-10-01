@@ -3,34 +3,41 @@ package com.steam_discount.common.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import java.util.Base64;
+import java.util.Base64.Decoder;
 import java.util.Date;
+import javax.crypto.SecretKey;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@Getter
 public class JwtUtil {
-    @Value("${jwt.secret.access.key}")
-    private String accessSecretKey;
-    @Value("${jwt.secret.refresh.key}")
-    private String refreshSecretKey;
+    @Value("${jwt.access.expiration}")
+    private Long accessExpiration;
+    @Value("${jwt.refresh.expiration}")
+    private Long refreshExpiration;
+    @Value("${jwt.refresh.cookie.max.age}")
+    private int refreshCookieMaxAge;
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
+    private final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
+    private final String ACCESS_TOKEN_HEADER_NAME = "Authorization";
 
-    public final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
-    public final String ACCESS_TOKEN_HEADER_NAME = "Authorization";
-    public final int REFRESH_TOKEN_COOKIE_MAX_AGE = 60 * 60 * 24 *7;
-    public final Long REFRESH_TOKEN_EXPIRE_TIME_MS = 1000L * 60 * 60 * 24 * 7;
+    private final SecretKey accessKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private final SecretKey refreshKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     public String generateAccessToken(String email){
-        return generateToken(email, accessSecretKey, expiration);
+        return generateToken(email, accessKey, accessExpiration);
     }
 
     public String generateRefreshToken(String email){
-        return generateToken(email, refreshSecretKey, REFRESH_TOKEN_EXPIRE_TIME_MS);
+        return generateToken(email, refreshKey, refreshExpiration);
     }
 
-    private String generateToken(String email, String secretKey, long expireTime) {
+    private String generateToken(String email, SecretKey secretKey, long expireTime) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expireTime);
 
@@ -38,35 +45,35 @@ public class JwtUtil {
             .setSubject(email)
             .setIssuedAt(now)
             .setExpiration(expiryDate)
-            .signWith(SignatureAlgorithm.HS512, secretKey)
+            .signWith(secretKey, SignatureAlgorithm.HS512)
             .compact();
     }
 
     public String getEmailFromAccessToken(String token){
-        return getEmailFromToken(token, accessSecretKey);
+        return getEmailFromToken(token, accessKey);
     }
 
     public String getEmailFromRefreshToken(String token){
-        return getEmailFromToken(token, refreshSecretKey);
+        return getEmailFromToken(token, refreshKey);
     }
 
-    private String getEmailFromToken(String token, String secretKey) {
+    private String getEmailFromToken(String token, SecretKey secretKey) {
         return getClaimsFromToken(token, secretKey).getSubject();
     }
 
-    private Claims getClaimsFromToken(String token, String secretKey){
+    private Claims getClaimsFromToken(String token, SecretKey secretKey){
         return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
     }
 
     public boolean validateAccessToken(String token){
-        return validateToken(token, accessSecretKey);
+        return validateToken(token, accessKey);
     }
 
     public boolean validateRefreshToken(String token){
-        return validateToken(token, refreshSecretKey);
+        return validateToken(token, refreshKey);
     }
 
-    public boolean validateToken(String token, String secretKey) {
+    public boolean validateToken(String token, SecretKey secretKey) {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
