@@ -27,8 +27,8 @@ public class SteamDiscountCrawling {
 
     public List<Discount> getDiscountList() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless=new");
-        options.addArguments("--no-sandbox=new");
+        options.addArguments("--headless");
+        options.addArguments("--no-sandbox");
         options.addArguments("--disable-gpu");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-extensions");
