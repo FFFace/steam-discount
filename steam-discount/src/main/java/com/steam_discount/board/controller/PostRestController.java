@@ -3,6 +3,7 @@ package com.steam_discount.board.controller;
 
 import com.steam_discount.board.entity.dto.PostDTO;
 import com.steam_discount.board.entity.dto.PostPageDTO;
+import com.steam_discount.board.entity.responseDTO.PostPageListResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostResponseDTO;
 import com.steam_discount.board.service.PostService;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,8 +33,8 @@ public class PostRestController {
 
 
     @GetMapping
-    public ResponseEntity<List<PostPageResponseDTO>> getPosts(@RequestBody @Valid PostPageDTO postPageDTO){
-        return ResponseEntity.ok(postService.findPostList(postPageDTO));
+    public ResponseEntity<PostPageListResponseDTO> getPosts(@RequestParam long boardId, @RequestParam(required = false, defaultValue = "0") int page){
+        return ResponseEntity.ok(postService.findPostList(boardId, page));
     }
 
     @GetMapping("/{id}")
