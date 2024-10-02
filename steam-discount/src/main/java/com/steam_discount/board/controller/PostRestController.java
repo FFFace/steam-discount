@@ -42,6 +42,11 @@ public class PostRestController {
         return ResponseEntity.ok(postService.findPostById(id));
     }
 
+    @GetMapping("/main-notice")
+    public ResponseEntity<PostPageResponseDTO> getMainNoticePost(){
+        return ResponseEntity.ok(postService.findMainNoticePost());
+    }
+
     @PostMapping
     public void createPost(@RequestBody @Valid PostDTO postDTO, @AuthenticationPrincipal CustomUser customUser){
         postService.createPost(postDTO, customUser.getUser());
