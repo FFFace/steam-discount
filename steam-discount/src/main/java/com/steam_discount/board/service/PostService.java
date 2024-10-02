@@ -27,6 +27,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final BoardRepository boardRepository;
 
+    private final int NOTICE_BOARD_NUMBER = 1;
+
     public PostPageListResponseDTO findPostList(long boardId, int page ){
         Board board = boardRepository.findById(boardId).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_BOARD));
@@ -48,6 +50,11 @@ public class PostService {
             new CustomException(ErrorCode.NOT_FOUND_POST));
 
         return post.toPostResponseDTO();
+    }
+
+    public PostPageResponseDTO findMainNoticePost(){
+        return postRepository.findLastByBoardId(NOTICE_BOARD_NUMBER).orElseThrow(() ->
+            new CustomException(ErrorCode.NOT_FOUND_POST)).toPageResponseDTO();
     }
 
     public void createPost(PostDTO postDTO, User user){
