@@ -73,7 +73,11 @@ public class Post extends BaseEntity {
     public PostResponseDTO toPostResponseDTO(){
         PostResponseDTO postResponseDTO = new PostResponseDTO();
 
+        postResponseDTO.setName(name);
         postResponseDTO.setContent(content);
+        postResponseDTO.setThumbsUp(thumbsUp);
+        postResponseDTO.setThumbsDown(thumbsDown);
+        postResponseDTO.setCreatedAt(getCreatedAt());
 
         List<CommentResponseDTO> commentResponseDTOList = new ArrayList<>();
         for(Comment comment: commentList){
