@@ -1,6 +1,7 @@
 package com.steam_discount.board.entity.responseDTO;
 
 import com.steam_discount.board.entity.Comment;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +13,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostResponseDTO {
-
+    private String writer;
+    private String name;
     private String content;
+    private Integer thumbsUp;
+    private Integer thumbsDown;
+    private LocalDateTime createdAt;
     private List<CommentResponseDTO> commentList;
 }
