@@ -13,11 +13,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostResponseDTO {
-    private String writer;
-    private String name;
     private String content;
     private Integer thumbsUp;
     private Integer thumbsDown;
-    private LocalDateTime createdAt;
     private List<CommentResponseDTO> commentList;
 }
