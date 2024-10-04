@@ -48,10 +48,10 @@ public class Post extends BaseEntity {
     private String content;
 
     @Column
-    private int thumbsUp;
+    private Integer thumbsUp;
 
     @Column
-    private int thumbsDown;
+    private Integer thumbsDown;
 
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList;

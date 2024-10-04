@@ -18,7 +18,7 @@ import org.checkerframework.checker.units.qual.N;
 @NoArgsConstructor
 public class PostDTO {
 
-    private long boardId;
+    private Integer boardId;
     private String name;
     private String content;
 

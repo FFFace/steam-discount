@@ -27,7 +27,7 @@ import org.checkerframework.checker.units.qual.C;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(nullable = false)
     private String email;

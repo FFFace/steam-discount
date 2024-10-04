@@ -1,5 +1,4 @@
-package com.steam_discount.user.entity;
-
+package com.steam_discount.board.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,21 +13,20 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class RefreshToken {
+@NoArgsConstructor
+public class PostThumbs {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column
-    private String token;
+    private Integer userId;
 
     @Column
-    private String email;
+    private Long postId;
 
-    public RefreshToken(String token, String email){
-        this.token = token;
-        this.email = email;
-    }
+    @Column
+    private Character thumb;
 }

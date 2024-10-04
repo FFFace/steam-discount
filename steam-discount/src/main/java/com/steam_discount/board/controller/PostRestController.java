@@ -33,7 +33,7 @@ public class PostRestController {
 
 
     @GetMapping
-    public ResponseEntity<PostPageListResponseDTO> getPosts(@RequestParam long boardId, @RequestParam(required = false, defaultValue = "0") int page){
+    public ResponseEntity<PostPageListResponseDTO> getPosts(@RequestParam int boardId, @RequestParam(required = false, defaultValue = "0") int page){
         return ResponseEntity.ok(postService.findPostList(boardId, page));
     }
 

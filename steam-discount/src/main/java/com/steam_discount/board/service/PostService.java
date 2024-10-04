@@ -4,7 +4,6 @@ package com.steam_discount.board.service;
 import com.steam_discount.board.entity.Board;
 import com.steam_discount.board.entity.Post;
 import com.steam_discount.board.entity.dto.PostDTO;
-import com.steam_discount.board.entity.dto.PostPageDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageListResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostResponseDTO;
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +26,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final BoardRepository boardRepository;
 
-    private final int NOTICE_BOARD_NUMBER = 1;
+    private final Integer NOTICE_BOARD_NUMBER = 1;
 
-    public PostPageListResponseDTO findPostList(long boardId, int page ){
+    public PostPageListResponseDTO findPostList(Integer boardId, int page ){
         Board board = boardRepository.findById(boardId).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_BOARD));
 
@@ -47,8 +45,7 @@ public class PostService {
     }
 
     public PostResponseDTO findPostById(Long id){
-        Post post = postRepository.findById(id).orElseThrow(() ->
-            new CustomException(ErrorCode.NOT_FOUND_POST));
+        Post post = findPost(id);
 
         return post.toPostResponseDTO();
     }
@@ -57,6 +54,12 @@ public class PostService {
         return postRepository.findLastByBoardId(NOTICE_BOARD_NUMBER).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_POST)).toPageResponseDTO();
     }
+
+//    public PostResponseDTO findPostAndThumbsUp(Long id){
+//        Post post = findPost(id);
+//
+//
+//    }
 
     public void createPost(PostDTO postDTO, User user){
         Board board = boardRepository.findById(postDTO.getBoardId()).orElseThrow(() ->
@@ -67,5 +70,10 @@ public class PostService {
         post.setBoard(board);
 
         postRepository.save(post);
+    }
+
+    private Post findPost(Long id){
+        return postRepository.findById(id).orElseThrow(()->
+            new CustomException(ErrorCode.NOT_FOUND_POST));
     }
 }

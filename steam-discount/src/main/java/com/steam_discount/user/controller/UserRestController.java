@@ -34,7 +34,7 @@ public class UserRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@RequestParam Long id){
+    public ResponseEntity<User> getUser(@RequestParam Integer id){
         return ResponseEntity.ok(userService.findUserById(id));
     }
 
