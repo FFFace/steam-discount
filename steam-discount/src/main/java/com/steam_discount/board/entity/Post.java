@@ -31,7 +31,7 @@ import lombok.Setter;
 public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
@@ -48,10 +48,10 @@ public class Post extends BaseEntity {
     private String content;
 
     @Column
-    private Integer thumbsUp;
+    private int thumbsUp;
 
     @Column
-    private Integer thumbsDown;
+    private int thumbsDown;
 
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList;

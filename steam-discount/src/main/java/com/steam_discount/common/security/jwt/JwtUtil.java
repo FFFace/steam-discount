@@ -17,9 +17,9 @@ import org.springframework.stereotype.Component;
 @Getter
 public class JwtUtil {
     @Value("${jwt.access.expiration}")
-    private Long accessExpiration;
+    private long accessExpiration;
     @Value("${jwt.refresh.expiration}")
-    private Long refreshExpiration;
+    private long refreshExpiration;
     @Value("${jwt.refresh.cookie.max.age}")
     private int refreshCookieMaxAge;
 

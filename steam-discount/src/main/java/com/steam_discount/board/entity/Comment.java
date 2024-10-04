@@ -26,7 +26,7 @@ import lombok.Setter;
 public class Comment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -40,10 +40,10 @@ public class Comment extends BaseEntity {
     private String content;
 
     @Column
-    private Integer thumbsUp;
+    private int thumbsUp;
 
     @Column
-    private Integer thumbsDown;
+    private int thumbsDown;
 
 
 

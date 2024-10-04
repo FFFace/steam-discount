@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PostResponseDTO {
     private String content;
-    private Integer thumbsUp;
-    private Integer thumbsDown;
+    private int thumbsUp;
+    private int thumbsDown;
     private List<CommentResponseDTO> commentList;
 }

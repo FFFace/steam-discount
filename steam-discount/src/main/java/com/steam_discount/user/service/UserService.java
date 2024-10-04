@@ -47,7 +47,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findUserById(Integer id) {
+    public User findUserById(int id) {
         return userRepository.findById(id).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_USER));
     }

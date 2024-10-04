@@ -19,14 +19,14 @@ public class PostThumbs {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column
-    private Integer userId;
+    private int userId;
 
     @Column
-    private Long postId;
+    private long postId;
 
     @Column
-    private Character thumb;
+    private char thumb;
 }

@@ -27,7 +27,7 @@ import org.checkerframework.checker.units.qual.C;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     @Column(nullable = false)
     private String email;
@@ -49,7 +49,7 @@ public class User {
     private UserRole role;
 
     @Column
-    private Character verify;
+    private char verify;
 
     @Column
     private String verifyCode;

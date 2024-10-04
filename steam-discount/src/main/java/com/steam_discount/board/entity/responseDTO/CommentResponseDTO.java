@@ -13,6 +13,6 @@ public class CommentResponseDTO {
     private long postId;
     private String writer;
     private String content;
-    private Integer thumbsUp;
-    private Integer thumbsDown;
+    private int thumbsUp;
+    private int thumbsDown;
 }
