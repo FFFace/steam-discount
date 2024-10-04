@@ -61,11 +61,13 @@ public class PostService {
             new CustomException(ErrorCode.NOT_FOUND_POST)).toPageResponseDTO();
     }
 
-    /** 전달 받은 post 값으로 PostThumbs 를 검색합니다.
-     * 검색할 데이터가 없으면 새로운 게시글 추천 데이터를 생성합니다.
-     * 검색된 데이터가 있으면 기존 데이터를 게시글 추천으로 수정 후 반영합니다.
+    /** 게시글 추천 기능 함수 입니다.<br/>
+     * 전달 받은 post 값으로 PostThumbs 를 검색합니다.<br/>
+     * 검색된 데이터가 이미 게시글 추천 상태이면 해당 데이터를 삭제합니다.<br/>
+     * 검색된 데이터가 게시글 비추천 상태이면 추천 상태로 수정합니다.<br/>
+     * 검색된 데이터가 없으면 게시글 추천 데이터를 생성합니다.
      * @param id post id
-     * @param user 로그인 중인 사용자
+     * @param user 검증된 사용자
      * @return 게시글 추천, 비추천 수
      */
     public PostThumbsResponseDTO findPostAndThumbsUpResponse(long id, User user){
@@ -86,6 +88,50 @@ public class PostService {
 
                 postThumbsResponseDTO.setThumbsUp(post.getThumbsUp()+1);
                 postThumbsResponseDTO.setThumbsDown(post.getThumbsDown()-1);
+            }
+        } else{
+            PostThumbs newPostThumbs = new PostThumbs();
+            Post post = findPostById(id);
+            newPostThumbs.setPost(post);
+            newPostThumbs.setThumb('U');
+            newPostThumbs.setUserId(user.getId());
+
+            postThumbsSave(newPostThumbs);
+
+            postThumbsResponseDTO.setThumbsUp(post.getThumbsUp()+1);
+            postThumbsResponseDTO.setThumbsDown(post.getThumbsDown());
+        }
+
+        return postThumbsResponseDTO;
+    }
+
+    /** 게시글 비추천 기능 함수 입니다.<br/>
+     * 전달 받은 post 값으로 PostThumbs 를 검색합니다.<br/>
+     * 검색된 데이터가 이미 게시글 비추천 상태이면 해당 데이터를 삭제합니다.<br/>
+     * 검색된 데이터가 게시글 추천 상태이면 추천 상태로 수정합니다.<br/>
+     * 검색된 데이터가 없으면 게시글 비추천 데이터를 생성합니다.
+     * @param id post id
+     * @param user 검증된 사용자
+     * @return 게시글 추천, 비추천 수
+     */
+    public PostThumbsResponseDTO findPostAndThumbsDownResponse(long id, User user){
+        PostThumbs postThumbs = postThumbsRepository.findByPostIdAndUserId(id, user.getId()).orElse(null);
+        PostThumbsResponseDTO postThumbsResponseDTO = new PostThumbsResponseDTO();
+
+        if(postThumbs != null){
+            Post post = postThumbs.getPost();
+
+            if(postThumbs.getThumb() == 'D'){
+                postThumbsDelete(postThumbs);
+
+                postThumbsResponseDTO.setThumbsUp(post.getThumbsUp());
+                postThumbsResponseDTO.setThumbsDown(post.getThumbsDown()-1);
+            } else if(postThumbs.getThumb() == 'U'){
+                postThumbs.setThumb('D');
+                postThumbsSave(postThumbs);
+
+                postThumbsResponseDTO.setThumbsUp(post.getThumbsUp()-1);
+                postThumbsResponseDTO.setThumbsDown(post.getThumbsDown()+1);
             }
         } else{
             PostThumbs newPostThumbs = new PostThumbs();
