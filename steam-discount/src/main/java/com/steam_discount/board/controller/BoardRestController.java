@@ -17,7 +17,6 @@ public class BoardRestController {
     private final BoardService boardService;
 
 
-
     @GetMapping
     public ResponseEntity<List<Board>> getBoardList(){
         return ResponseEntity.ok(boardService.findAll());
