@@ -5,6 +5,7 @@ import com.steam_discount.board.entity.dto.PostDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageListResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostResponseDTO;
+import com.steam_discount.board.entity.responseDTO.PostThumbsResponseDTO;
 import com.steam_discount.board.service.PostService;
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import jakarta.validation.Valid;
@@ -34,13 +35,23 @@ public class PostRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDTO> getPost(@PathVariable Long id){
+    public ResponseEntity<PostResponseDTO> getPost(@PathVariable long id){
         return ResponseEntity.ok(postService.findPostByIdResponse(id));
     }
 
     @GetMapping("/main-notice")
     public ResponseEntity<PostPageResponseDTO> getMainNoticePost(){
         return ResponseEntity.ok(postService.findMainNoticePostResponse());
+    }
+
+    @PostMapping("/{id}/thumbs-up")
+    public ResponseEntity<PostThumbsResponseDTO> postThumbsUp(@PathVariable long id, @AuthenticationPrincipal CustomUser customUser){
+        return ResponseEntity.ok(postService.findPostAndThumbsUpResponse(id, customUser.getUser()));
+    }
+
+    @PostMapping("/{id}/thumbs-down")
+    public ResponseEntity<PostThumbsResponseDTO> postThumbsDown(@PathVariable long id, @AuthenticationPrincipal CustomUser customUser){
+        return ResponseEntity.ok(postService.findPostAndThumbsDownResponse(id, customUser.getUser()));
     }
 
     @PostMapping
