@@ -39,48 +39,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
         String accessToken = request.getHeader("Authorization");
+        Cookie[] cookies = request.getCookies();
 
         if (accessToken == null || accessToken.equals("undefined")) {
-            Cookie[] cookies = request.getCookies();
-
-            if(cookies == null){
+            if(!verifyRefreshToken(cookies, accessToken, response)){
                 filterChain.doFilter(request, response);
                 return;
             }
-
-            Cookie cookie = Arrays.stream(cookies).filter(c -> c.getName().equals("refreshToken")).findFirst().orElse(null);
-
-            if(cookie == null){
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            if(!jwtUtil.validateRefreshToken(cookie.getValue())){
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            String email = jwtUtil.getEmailFromRefreshToken(cookie.getValue());
-
-            String refreshToken = cookie.getValue();
-            RefreshToken dbRefreshToken = refreshTokenRepository.findByEmail(email).orElse(null);
-
-            if(dbRefreshToken == null){
-                filterChain.doFilter(request, response);
-                return;
-            } else if(!dbRefreshToken.getToken().equals(refreshToken)){
-                refreshTokenRepository.delete(dbRefreshToken);
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            accessToken = jwtUtil.generateAccessToken(email);
-
-            response.setHeader("Authorization", accessToken);
 
         } else if(!jwtUtil.validateAccessToken(accessToken)){
-            filterChain.doFilter(request, response);
-            return;
+            if(!verifyRefreshToken(cookies, accessToken, response)){
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
 
         verifyAccessToken(accessToken, request);
@@ -98,6 +69,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    private boolean verifyRefreshToken(Cookie[] cookies, String accessToken, HttpServletResponse response){
+        if(cookies == null){
+            return false;
+        }
+
+        Cookie cookie = Arrays.stream(cookies).filter(c -> c.getName().equals("refreshToken")).findFirst().orElse(null);
+
+        if(cookie == null){
+            return false;
+        }
+
+        if(!jwtUtil.validateRefreshToken(cookie.getValue())){
+            return false;
+        }
+
+        String email = jwtUtil.getEmailFromRefreshToken(cookie.getValue());
+
+        String refreshToken = cookie.getValue();
+        RefreshToken dbRefreshToken = refreshTokenRepository.findByEmail(email).orElse(null);
+
+        if(dbRefreshToken == null){
+            return false;
+        } else if(!dbRefreshToken.getToken().equals(refreshToken)){
+            refreshTokenRepository.delete(dbRefreshToken);
+            return false;
+        }
+
+        accessToken = jwtUtil.generateAccessToken(email);
+
+        response.setHeader("Authorization", accessToken);
+
+        return true;
     }
 
     private void verifyAccessToken(String token, HttpServletRequest request){
