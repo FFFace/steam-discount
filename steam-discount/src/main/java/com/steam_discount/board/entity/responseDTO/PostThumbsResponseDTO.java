@@ -13,4 +13,5 @@ import lombok.Setter;
 public class PostThumbsResponseDTO {
     private int thumbsUp;
     private int thumbsDown;
+    private char thumb;
 }

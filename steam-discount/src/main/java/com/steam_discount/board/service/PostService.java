@@ -14,10 +14,12 @@ import com.steam_discount.board.repository.PostRepository;
 import com.steam_discount.board.repository.PostThumbsRepository;
 import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
+import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.user.entity.User;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,10 +52,20 @@ public class PostService {
     }
 
 
-    public PostResponseDTO findPostByIdResponse(long id){
+    public PostResponseDTO findPostByIdResponse(long id, CustomUser customUser){
         Post post = findPostById(id);
+        PostResponseDTO postResponseDTO = post.toPostResponseDTO();
 
-        return post.toPostResponseDTO();
+        if(customUser != null){
+            User user = customUser.getUser();
+
+            Optional<PostThumbs> optionalPostThumbs = postThumbsRepository.findByPostIdAndUserId(id, user.getId());
+
+            optionalPostThumbs.ifPresent(
+                postThumbs -> postResponseDTO.setThumb(postThumbs.getThumb()));
+        }
+
+        return postResponseDTO;
     }
 
 
@@ -106,6 +118,8 @@ public class PostService {
             postThumbsResponseDTO.setThumbsDown(post.getThumbsDown());
         }
 
+        postThumbsResponseDTO.setThumb('U');
+
         return postThumbsResponseDTO;
     }
 
@@ -150,6 +164,8 @@ public class PostService {
             postThumbsResponseDTO.setThumbsUp(post.getThumbsUp());
             postThumbsResponseDTO.setThumbsDown(post.getThumbsDown()+1);
         }
+
+        postThumbsResponseDTO.setThumb('D');
 
         return postThumbsResponseDTO;
     }

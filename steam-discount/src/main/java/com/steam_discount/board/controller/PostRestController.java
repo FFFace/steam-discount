@@ -35,8 +35,8 @@ public class PostRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDTO> getPost(@PathVariable long id){
-        return ResponseEntity.ok(postService.findPostByIdResponse(id));
+    public ResponseEntity<PostResponseDTO> getPost(@PathVariable long id, @AuthenticationPrincipal CustomUser customUser){
+        return ResponseEntity.ok(postService.findPostByIdResponse(id, customUser));
     }
 
     @GetMapping("/main-notice")
