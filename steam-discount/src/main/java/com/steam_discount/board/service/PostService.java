@@ -15,6 +15,7 @@ import com.steam_discount.board.repository.PostThumbsRepository;
 import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.user.entity.User;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -61,6 +62,8 @@ public class PostService {
             new CustomException(ErrorCode.NOT_FOUND_POST)).toPageResponseDTO();
     }
 
+
+
     /** 게시글 추천 기능 함수 입니다.<br/>
      * 전달 받은 post 값으로 PostThumbs 를 검색합니다.<br/>
      * 검색된 데이터가 이미 게시글 추천 상태이면 해당 데이터를 삭제합니다.<br/>
@@ -70,6 +73,7 @@ public class PostService {
      * @param user 검증된 사용자
      * @return 게시글 추천, 비추천 수
      */
+    @Transactional
     public PostThumbsResponseDTO findPostAndThumbsUpResponse(long id, User user){
         PostThumbs postThumbs = postThumbsRepository.findByPostIdAndUserId(id, user.getId()).orElse(null);
         PostThumbsResponseDTO postThumbsResponseDTO = new PostThumbsResponseDTO();
@@ -114,6 +118,7 @@ public class PostService {
      * @param user 검증된 사용자
      * @return 게시글 추천, 비추천 수
      */
+    @Transactional
     public PostThumbsResponseDTO findPostAndThumbsDownResponse(long id, User user){
         PostThumbs postThumbs = postThumbsRepository.findByPostIdAndUserId(id, user.getId()).orElse(null);
         PostThumbsResponseDTO postThumbsResponseDTO = new PostThumbsResponseDTO();
@@ -137,13 +142,13 @@ public class PostService {
             PostThumbs newPostThumbs = new PostThumbs();
             Post post = findPostById(id);
             newPostThumbs.setPost(post);
-            newPostThumbs.setThumb('U');
+            newPostThumbs.setThumb('D');
             newPostThumbs.setUserId(user.getId());
 
             postThumbsSave(newPostThumbs);
 
-            postThumbsResponseDTO.setThumbsUp(post.getThumbsUp()+1);
-            postThumbsResponseDTO.setThumbsDown(post.getThumbsDown());
+            postThumbsResponseDTO.setThumbsUp(post.getThumbsUp());
+            postThumbsResponseDTO.setThumbsDown(post.getThumbsDown()+1);
         }
 
         return postThumbsResponseDTO;

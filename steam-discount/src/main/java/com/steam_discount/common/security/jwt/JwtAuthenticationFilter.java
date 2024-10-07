@@ -1,7 +1,6 @@
 package com.steam_discount.common.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.ResponseException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.common.security.jwt.user.CustomUser;
@@ -21,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -39,22 +37,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
         throws ServletException, IOException {
         String accessToken = request.getHeader("Authorization");
-        Cookie[] cookies = request.getCookies();
+
 
         if (accessToken == null || accessToken.equals("undefined")) {
-            if(!verifyRefreshToken(cookies, accessToken, response)){
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-        } else if(!jwtUtil.validateAccessToken(accessToken)){
-            if(!verifyRefreshToken(cookies, accessToken, response)){
+            if(!validateRefreshToken(request, response)){
                 filterChain.doFilter(request, response);
                 return;
             }
         }
 
-        verifyAccessToken(accessToken, request);
+        if(!validateAccessToken(accessToken, request, response)){
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         filterChain.doFilter(request, response);
     }
@@ -71,7 +66,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    private boolean verifyRefreshToken(Cookie[] cookies, String accessToken, HttpServletResponse response){
+    private boolean validateRefreshToken(HttpServletRequest request, HttpServletResponse response){
+        Cookie[] cookies = request.getCookies();
+
         if(cookies == null){
             return false;
         }
@@ -86,6 +83,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return false;
         }
 
+        return verifyRefreshTokenToken(cookie, response);
+    }
+
+    private boolean verifyRefreshTokenToken(Cookie cookie, HttpServletResponse response){
         String email = jwtUtil.getEmailFromRefreshToken(cookie.getValue());
 
         String refreshToken = cookie.getValue();
@@ -98,24 +99,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return false;
         }
 
-        accessToken = jwtUtil.generateAccessToken(email);
+        String accessToken = jwtUtil.generateAccessToken(email);
 
-        response.setHeader("Authorization", accessToken);
+        verifyAccessToken(accessToken);
 
         return true;
     }
 
-    private void verifyAccessToken(String token, HttpServletRequest request){
-        if(!jwtUtil.validateAccessToken(token))
-            return;
+    private boolean validateAccessToken(String accessToken, HttpServletRequest request,  HttpServletResponse response){
+        if(!jwtUtil.validateAccessToken(accessToken)){
+            return validateRefreshToken(request, response);
+        } else{
+            verifyAccessToken(accessToken);
 
-        String email = jwtUtil.getEmailFromAccessToken(token);
+            return true;
+        }
+    }
+
+    private void verifyAccessToken(String accessToken){
+        String email = jwtUtil.getEmailFromAccessToken(accessToken);
 
         CustomUser user = (CustomUser) customUserDetailsService.loadUserByUsername(email);
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
             user, null, List.of(new SimpleGrantedAuthority(user.getUser().getRole().getName())));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
     }
 }
