@@ -17,5 +17,6 @@ public class PostResponseDTO {
     private int thumbsUp;
     private int thumbsDown;
     private char thumb;
+    private String createdAt;
     private List<CommentResponseDTO> commentList;
 }

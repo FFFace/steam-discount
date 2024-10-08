@@ -1,6 +1,5 @@
 package com.steam_discount.board.repository;
 
-import com.steam_discount.board.entity.Board;
 import com.steam_discount.board.entity.Post;
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +16,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByBoardIdAndLimit10(long boardId, int startIndex);
 
     Page<Post> findByBoardId(int boardId, Pageable pageable);
-    Optional<Post> findLastByBoardId(int boardId);
+    Optional<Post> findFirstByBoardIdOrderByCreatedAtDesc(int boardId);
 }

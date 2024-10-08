@@ -70,7 +70,7 @@ public class PostService {
 
 
     public PostPageResponseDTO findMainNoticePostResponse(){
-        return postRepository.findLastByBoardId(NOTICE_BOARD_NUMBER).orElseThrow(() ->
+        return postRepository.findFirstByBoardIdOrderByCreatedAtDesc(NOTICE_BOARD_NUMBER).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_POST)).toPageResponseDTO();
     }
 

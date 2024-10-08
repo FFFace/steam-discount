@@ -13,5 +13,4 @@ public class PostPageResponseDTO {
     private String name;
     private int thumbsUp;
     private int thumbsDown;
-    private LocalDateTime createdAt;
 }

@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -76,6 +77,7 @@ public class Post extends BaseEntity {
         postResponseDTO.setContent(content);
         postResponseDTO.setThumbsUp(thumbsUp);
         postResponseDTO.setThumbsDown(thumbsDown);
+        postResponseDTO.setCreatedAt(getCreatedAt().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm")));
 
         List<CommentResponseDTO> commentResponseDTOList = new ArrayList<>();
         for(Comment comment: commentList){
