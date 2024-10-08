@@ -32,6 +32,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/api/logout").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
             .requestMatchers("/api/token-check").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+            .requestMatchers("/api/posts/{id}/thumbs-up", "/api/posts/{id}/thumbs-down").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
             .anyRequest().permitAll());
 
 
