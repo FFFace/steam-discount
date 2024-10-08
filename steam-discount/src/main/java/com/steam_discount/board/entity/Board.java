@@ -25,7 +25,4 @@ public class Board {
 
     @Column
     private String name;
-
-    @Column
-    private String description;
 }
