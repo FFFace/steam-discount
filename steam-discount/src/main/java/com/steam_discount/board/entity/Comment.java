@@ -32,6 +32,8 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    private Long parentId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
     private User writer;
@@ -46,7 +48,11 @@ public class Comment extends BaseEntity {
     private int thumbsDown;
 
 
-
+    /**
+     * ResponseDTO 를 리턴합니다.<br/>
+     * id, postId, writer, content, thumbsUp, thumbsDown 을 초기화 후 리턴합니다.
+     * @return CommentResponseDTO
+     */
     public CommentResponseDTO toResponseDTO(){
         CommentResponseDTO commentResponseDTO = new CommentResponseDTO();
 

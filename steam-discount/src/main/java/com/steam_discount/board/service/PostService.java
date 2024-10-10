@@ -2,14 +2,19 @@ package com.steam_discount.board.service;
 
 
 import com.steam_discount.board.entity.Board;
+import com.steam_discount.board.entity.Comment;
 import com.steam_discount.board.entity.Post;
 import com.steam_discount.board.entity.PostThumbs;
+import com.steam_discount.board.entity.dto.CommentDTO;
 import com.steam_discount.board.entity.dto.PostDTO;
+import com.steam_discount.board.entity.responseDTO.CommentPageRespopnseDTO;
+import com.steam_discount.board.entity.responseDTO.CommentResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageListResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostThumbsResponseDTO;
 import com.steam_discount.board.repository.BoardRepository;
+import com.steam_discount.board.repository.CommentRepository;
 import com.steam_discount.board.repository.PostRepository;
 import com.steam_discount.board.repository.PostThumbsRepository;
 import com.steam_discount.common.exception.CustomException;
@@ -23,6 +28,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,17 +37,17 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
     private final PostThumbsRepository postThumbsRepository;
 
     private final int NOTICE_BOARD_NUMBER = 1;
+    private final int PAGE_SIZE = 10;
 
     public PostPageListResponseDTO findPostListByBoardIdResponse(int boardId, int page ){
         Board board = boardRepository.findById(boardId).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_BOARD));
 
-        int pageSize = 10;
-
-        PageRequest pageRequest = PageRequest.of(page, pageSize);
+        PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
         Page<Post> postPage = postRepository.findByBoardId(boardId, pageRequest);
         List<PostPageResponseDTO> postPageResponseDTOList = new ArrayList<>();
 
@@ -189,8 +195,41 @@ public class PostService {
         postRepository.save(post);
     }
 
+    /**
+     * id 값을 기준으로 post를 찾습니다.
+     * @param id
+     * @return Post
+     * @exception CustomException not found post
+     */
     private Post findPostById(long id){
         return postRepository.findById(id).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_POST));
+    }
+
+    // NOTE: Comment 함수
+
+    public CommentPageRespopnseDTO getCommentPageResponse(long postId, int page){
+        PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
+
+        Page<Comment> commentPage = commentRepository.findByPostId(postId, pageRequest);
+        List<CommentResponseDTO> commentResponseDTOList = new ArrayList<>();
+
+        commentPage.get().forEach(comment -> commentResponseDTOList.add(comment.toResponseDTO()));
+        CommentPageRespopnseDTO commentPageRespopnseDTO = new CommentPageRespopnseDTO();
+
+        commentPageRespopnseDTO.setCommentResponseDTOList(commentResponseDTOList);
+        commentPageRespopnseDTO.setTotalPage(commentPage.getTotalPages());
+
+        return commentPageRespopnseDTO;
+    }
+
+    public void createComment(CommentDTO commentDTO, User user){
+        Post post = findPostById(commentDTO.getPostId());
+
+        Comment comment = commentDTO.toEntity();
+        comment.setPost(post);
+        comment.setWriter(user);
+
+        commentRepository.save(comment);
     }
 }
