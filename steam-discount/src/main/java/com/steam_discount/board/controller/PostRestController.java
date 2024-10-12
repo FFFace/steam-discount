@@ -3,6 +3,7 @@ package com.steam_discount.board.controller;
 
 import com.steam_discount.board.entity.dto.CommentDTO;
 import com.steam_discount.board.entity.dto.PostDTO;
+import com.steam_discount.board.entity.responseDTO.CommentPageRespopnseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageListResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostResponseDTO;
@@ -62,12 +63,12 @@ public class PostRestController {
 
     // NOTE: Comment 함수
 
-    @GetMapping("/comment")
-    public void getComment(@RequestParam long postId, @RequestParam(required = false, defaultValue = "0") int page){
-        postService.getCommentPageResponse(postId, page);
+    @GetMapping("/comments")
+    public CommentPageRespopnseDTO getComment(@RequestParam long postId, @RequestParam(required = false, defaultValue = "0") int page){
+        return postService.getCommentPageResponse(postId, page);
     }
 
-    @PostMapping("/comment")
+    @PostMapping("/comments")
     public void createComment(@RequestBody CommentDTO commentDTO, @AuthenticationPrincipal CustomUser customUser){
         postService.createComment(commentDTO, customUser.getUser());
     }
