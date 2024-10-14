@@ -28,7 +28,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -208,10 +207,42 @@ public class PostService {
 
     // NOTE: Comment 함수
 
+    /**
+     * 게시글의 댓글들을 페이지 형태로 리턴 합니다.
+     * @param postId 게시글 id
+     * @param page 페이지
+     * @return CommentPageResponseDTO
+     */
     public CommentPageRespopnseDTO getCommentPageResponse(long postId, int page){
         PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
 
-        Page<Comment> commentPage = commentRepository.findByPostId(postId, pageRequest);
+        Page<Comment> commentPage = commentRepository.findByPostIdAndParentIdIsNull(postId, pageRequest);
+        List<CommentResponseDTO> commentResponseDTOList = new ArrayList<>();
+
+        commentPage.get().forEach(comment -> commentResponseDTOList.add(comment.toResponseDTO()));
+        CommentPageRespopnseDTO commentPageRespopnseDTO = new CommentPageRespopnseDTO();
+
+        commentResponseDTOList.forEach(commentResponseDTO -> {
+            CommentPageRespopnseDTO replyPageResponseDTO = getReplyCommentPageResponse(commentResponseDTO.getId(), 0);
+            commentResponseDTO.setReplyCommentPageResponseDTO(replyPageResponseDTO);
+        });
+
+        commentPageRespopnseDTO.setCommentResponseDTOList(commentResponseDTOList);
+        commentPageRespopnseDTO.setTotalPage(commentPage.getTotalPages());
+
+        return commentPageRespopnseDTO;
+    }
+
+    /**
+     * 댓글의 대댓글을 페이지 형태로 리턴합니다.
+     * @param parentId 댓글 id
+     * @param page 페이지
+     * @return CommentPageResponseDTO
+     */
+    public CommentPageRespopnseDTO getReplyCommentPageResponse(long parentId, int page){
+        PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
+
+        Page<Comment> commentPage = commentRepository.findByParentId(parentId, pageRequest);
         List<CommentResponseDTO> commentResponseDTOList = new ArrayList<>();
 
         commentPage.get().forEach(comment -> commentResponseDTOList.add(comment.toResponseDTO()));

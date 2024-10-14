@@ -58,7 +58,7 @@ public class Comment extends BaseEntity {
         CommentResponseDTO commentResponseDTO = new CommentResponseDTO();
 
         commentResponseDTO.setId(id);
-        commentResponseDTO.setPostId(post.getId());
+        commentResponseDTO.setParentId(parentId);
         commentResponseDTO.setWriter(writer.getNickname());
         commentResponseDTO.setContent(content);
         commentResponseDTO.setThumbsUp(thumbsUp);

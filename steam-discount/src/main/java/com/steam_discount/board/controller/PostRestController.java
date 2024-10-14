@@ -68,6 +68,11 @@ public class PostRestController {
         return postService.getCommentPageResponse(postId, page);
     }
 
+    @GetMapping("/comments/reply")
+    public CommentPageRespopnseDTO getCommentReply(@RequestParam long parentId, @RequestParam(required = false, defaultValue = "0") int page){
+        return postService.getReplyCommentPageResponse(parentId, page);
+    }
+
     @PostMapping("/comments")
     public void createComment(@RequestBody CommentDTO commentDTO, @AuthenticationPrincipal CustomUser customUser){
         postService.createComment(commentDTO, customUser.getUser());
