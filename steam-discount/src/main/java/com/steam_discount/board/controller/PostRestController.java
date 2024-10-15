@@ -18,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -60,6 +61,11 @@ public class PostRestController {
     @PostMapping
     public void createPost(@RequestBody @Valid PostDTO postDTO, @AuthenticationPrincipal CustomUser customUser){
         postService.createPost(postDTO, customUser.getUser());
+    }
+
+    @PutMapping("/{id}")
+    public void updatePost(@PathVariable long id, @RequestBody @Valid PostDTO postDTO, @AuthenticationPrincipal CustomUser customUser){
+        postService.updatePost(id, postDTO, customUser.getUser());
     }
 
     // NOTE: Comment 함수

@@ -3,6 +3,7 @@ package com.steam_discount.user.controller;
 
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.user.entity.Login;
+import com.steam_discount.user.entity.responseDTO.UserInfoResponseDTO;
 import com.steam_discount.user.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,7 +35,7 @@ public class LoginRestController {
     }
 
     @GetMapping("/token-check")
-    public void tokenCheck(@AuthenticationPrincipal CustomUser customUser){
-
+    public UserInfoResponseDTO tokenCheck(@AuthenticationPrincipal CustomUser customUser){
+        return new UserInfoResponseDTO(customUser.getUser().getNickname(), customUser.getUser().getRole().name());
     }
 }

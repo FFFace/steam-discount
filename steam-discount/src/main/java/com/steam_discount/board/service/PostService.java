@@ -183,6 +183,11 @@ public class PostService {
         postThumbsRepository.delete(postThumbs);
     }
 
+    /**
+     * 새로운 게시글을 생성합니다.
+     * @param postDTO 새로 생성할 게시글 정보
+     * @param user 로그인 한 사용자
+     */
     public void createPost(PostDTO postDTO, User user){
         Board board = boardRepository.findById(postDTO.getBoardId()).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_BOARD));
@@ -192,6 +197,25 @@ public class PostService {
         post.setBoard(board);
 
         postRepository.save(post);
+    }
+
+    /**
+     * 기존 게시글을 수정합니다.
+     * @param id 수정할 게시글 id
+     * @param postDTO 수정할 게시글 정보
+     * @param user 로그인 한 사용자
+     */
+    @Transactional
+    public void updatePost(long id, PostDTO postDTO, User user){
+        Post oldPost = findPostById(id);
+
+        if(oldPost.getWriter().getId() != user.getId())
+            throw new CustomException(ErrorCode.NOT_MATCH_USER_FOR_UPDATE_POST);
+
+        oldPost.setName(postDTO.getName());
+        oldPost.setContent(postDTO.getContent());
+
+        postRepository.save(oldPost);
     }
 
     /**
