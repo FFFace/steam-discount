@@ -4,6 +4,7 @@ package com.steam_discount.board.controller;
 import com.steam_discount.board.entity.dto.CommentDTO;
 import com.steam_discount.board.entity.dto.PostDTO;
 import com.steam_discount.board.entity.responseDTO.CommentPageRespopnseDTO;
+import com.steam_discount.board.entity.responseDTO.CommentResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageListResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostResponseDTO;
@@ -74,7 +75,7 @@ public class PostRestController {
     }
 
     @PostMapping("/comments")
-    public void createComment(@RequestBody CommentDTO commentDTO, @AuthenticationPrincipal CustomUser customUser){
-        postService.createComment(commentDTO, customUser.getUser());
+    public CommentResponseDTO createComment(@RequestBody CommentDTO commentDTO, @AuthenticationPrincipal CustomUser customUser){
+        return postService.createComment(commentDTO, customUser.getUser());
     }
 }

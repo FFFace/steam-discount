@@ -254,7 +254,7 @@ public class PostService {
         return commentPageRespopnseDTO;
     }
 
-    public void createComment(CommentDTO commentDTO, User user){
+    public CommentResponseDTO createComment(CommentDTO commentDTO, User user){
         Post post = findPostById(commentDTO.getPostId());
 
         Comment comment = commentDTO.toEntity();
@@ -262,5 +262,7 @@ public class PostService {
         comment.setWriter(user);
 
         commentRepository.save(comment);
+
+        return comment.toResponseDTO();
     }
 }
