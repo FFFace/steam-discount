@@ -7,7 +7,7 @@ import com.steam_discount.board.entity.Post;
 import com.steam_discount.board.entity.PostThumbs;
 import com.steam_discount.board.entity.dto.CommentDTO;
 import com.steam_discount.board.entity.dto.PostDTO;
-import com.steam_discount.board.entity.responseDTO.CommentPageRespopnseDTO;
+import com.steam_discount.board.entity.responseDTO.CommentPageResponseDTO;
 import com.steam_discount.board.entity.responseDTO.CommentResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageListResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageResponseDTO;
@@ -21,6 +21,7 @@ import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.user.entity.User;
+import com.steam_discount.user.entity.UserRole;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -188,7 +189,7 @@ public class PostService {
      * @param postDTO 새로 생성할 게시글 정보
      * @param user 로그인 한 사용자
      */
-    public void createPost(PostDTO postDTO, User user){
+    public long createPost(PostDTO postDTO, User user){
         Board board = boardRepository.findById(postDTO.getBoardId()).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_BOARD));
 
@@ -196,7 +197,7 @@ public class PostService {
         post.setWriter(user);
         post.setBoard(board);
 
-        postRepository.save(post);
+        return postRepository.save(post).getId();
     }
 
     /**
@@ -209,8 +210,11 @@ public class PostService {
     public void updatePost(long id, PostDTO postDTO, User user){
         Post oldPost = findPostById(id);
 
-        if(oldPost.getWriter().getId() != user.getId())
-            throw new CustomException(ErrorCode.NOT_MATCH_USER_FOR_UPDATE_POST);
+        if(user.getRole() != UserRole.ADMIN){
+            if(oldPost.getWriter().getId() != user.getId())
+                throw new CustomException(ErrorCode.NOT_MATCH_USER_FOR_UPDATE_POST);
+        }
+
 
         oldPost.setName(postDTO.getName());
         oldPost.setContent(postDTO.getContent());
@@ -237,22 +241,23 @@ public class PostService {
      * @param page 페이지
      * @return CommentPageResponseDTO
      */
-    public CommentPageRespopnseDTO getCommentPageResponse(long postId, int page){
+    public CommentPageResponseDTO getCommentPageResponse(long postId, int page){
         PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
 
         Page<Comment> commentPage = commentRepository.findByPostIdAndParentIdIsNull(postId, pageRequest);
         List<CommentResponseDTO> commentResponseDTOList = new ArrayList<>();
 
         commentPage.get().forEach(comment -> commentResponseDTOList.add(comment.toResponseDTO()));
-        CommentPageRespopnseDTO commentPageRespopnseDTO = new CommentPageRespopnseDTO();
+        CommentPageResponseDTO commentPageRespopnseDTO = new CommentPageResponseDTO();
 
         commentResponseDTOList.forEach(commentResponseDTO -> {
-            CommentPageRespopnseDTO replyPageResponseDTO = getReplyCommentPageResponse(commentResponseDTO.getId(), 0);
+            CommentPageResponseDTO replyPageResponseDTO = getReplyCommentPageResponse(commentResponseDTO.getId(), 0);
             commentResponseDTO.setReplyCommentPageResponseDTO(replyPageResponseDTO);
         });
 
         commentPageRespopnseDTO.setCommentResponseDTOList(commentResponseDTOList);
         commentPageRespopnseDTO.setTotalPage(commentPage.getTotalPages());
+        commentPageRespopnseDTO.setTotalElement(commentPage.getTotalElements());
 
         return commentPageRespopnseDTO;
     }
@@ -263,14 +268,14 @@ public class PostService {
      * @param page 페이지
      * @return CommentPageResponseDTO
      */
-    public CommentPageRespopnseDTO getReplyCommentPageResponse(long parentId, int page){
+    public CommentPageResponseDTO getReplyCommentPageResponse(long parentId, int page){
         PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
 
         Page<Comment> commentPage = commentRepository.findByParentId(parentId, pageRequest);
         List<CommentResponseDTO> commentResponseDTOList = new ArrayList<>();
 
         commentPage.get().forEach(comment -> commentResponseDTOList.add(comment.toResponseDTO()));
-        CommentPageRespopnseDTO commentPageRespopnseDTO = new CommentPageRespopnseDTO();
+        CommentPageResponseDTO commentPageRespopnseDTO = new CommentPageResponseDTO();
 
         commentPageRespopnseDTO.setCommentResponseDTOList(commentResponseDTOList);
         commentPageRespopnseDTO.setTotalPage(commentPage.getTotalPages());

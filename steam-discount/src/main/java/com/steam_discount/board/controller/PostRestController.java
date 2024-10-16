@@ -3,7 +3,7 @@ package com.steam_discount.board.controller;
 
 import com.steam_discount.board.entity.dto.CommentDTO;
 import com.steam_discount.board.entity.dto.PostDTO;
-import com.steam_discount.board.entity.responseDTO.CommentPageRespopnseDTO;
+import com.steam_discount.board.entity.responseDTO.CommentPageResponseDTO;
 import com.steam_discount.board.entity.responseDTO.CommentResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageListResponseDTO;
 import com.steam_discount.board.entity.responseDTO.PostPageResponseDTO;
@@ -59,8 +59,8 @@ public class PostRestController {
     }
 
     @PostMapping
-    public void createPost(@RequestBody @Valid PostDTO postDTO, @AuthenticationPrincipal CustomUser customUser){
-        postService.createPost(postDTO, customUser.getUser());
+    public long createPost(@RequestBody @Valid PostDTO postDTO, @AuthenticationPrincipal CustomUser customUser){
+        return postService.createPost(postDTO, customUser.getUser());
     }
 
     @PutMapping("/{id}")
@@ -71,17 +71,17 @@ public class PostRestController {
     // NOTE: Comment 함수
 
     @GetMapping("/comments")
-    public CommentPageRespopnseDTO getComment(@RequestParam long postId, @RequestParam(required = false, defaultValue = "0") int page){
+    public CommentPageResponseDTO getComment(@RequestParam long postId, @RequestParam(required = false, defaultValue = "0") int page){
         return postService.getCommentPageResponse(postId, page);
     }
 
     @GetMapping("/comments/reply")
-    public CommentPageRespopnseDTO getCommentReply(@RequestParam long parentId, @RequestParam(required = false, defaultValue = "0") int page){
+    public CommentPageResponseDTO getCommentReply(@RequestParam long parentId, @RequestParam(required = false, defaultValue = "0") int page){
         return postService.getReplyCommentPageResponse(parentId, page);
     }
 
     @PostMapping("/comments")
-    public CommentResponseDTO createComment(@RequestBody CommentDTO commentDTO, @AuthenticationPrincipal CustomUser customUser){
+    public CommentResponseDTO createComment(@RequestBody @Valid CommentDTO commentDTO, @AuthenticationPrincipal CustomUser customUser){
         return postService.createComment(commentDTO, customUser.getUser());
     }
 }
