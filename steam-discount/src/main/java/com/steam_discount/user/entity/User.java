@@ -24,7 +24,7 @@ import org.checkerframework.checker.units.qual.C;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user")
-public class User {
+public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
