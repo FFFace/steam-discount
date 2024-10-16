@@ -1,8 +1,5 @@
 package com.steam_discount.board.entity.responseDTO;
 
-import com.steam_discount.board.entity.Post;
-import com.steam_discount.user.entity.User;
-import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,5 +14,5 @@ public class CommentResponseDTO {
     private String createdAt;
     private int thumbsUp;
     private int thumbsDown;
-    private CommentPageRespopnseDTO replyCommentPageResponseDTO;
+    private CommentPageResponseDTO replyCommentPageResponseDTO;
 }
