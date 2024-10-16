@@ -7,7 +7,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CommentPageRespopnseDTO {
+public class CommentPageResponseDTO {
     private List<CommentResponseDTO> commentResponseDTOList;
     private int totalPage;
+    private long totalElement;
 }
