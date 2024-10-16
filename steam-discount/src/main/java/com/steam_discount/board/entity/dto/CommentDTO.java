@@ -2,6 +2,7 @@ package com.steam_discount.board.entity.dto;
 
 
 import com.steam_discount.board.entity.Comment;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +14,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CommentDTO {
 
+    @NotBlank
     private long postId;
     private Long parentId;
+    @NotBlank
     private String content;
 
 
