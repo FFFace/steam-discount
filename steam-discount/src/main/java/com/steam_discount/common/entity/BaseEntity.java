@@ -1,5 +1,6 @@
 package com.steam_discount.common.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -18,7 +19,11 @@ import lombok.Setter;
 public class BaseEntity {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Character disable;
 
+    public void isDisable(){
+        disable = 'T';
+    }
 
     @PrePersist
     public void prePersist(){
