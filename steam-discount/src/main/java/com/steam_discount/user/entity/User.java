@@ -54,14 +54,6 @@ public class User extends BaseEntity{
     @Column
     private String verifyCode;
 
-    @Column
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    public void prePersist(){
-        createdAt = LocalDateTime.now();
-    }
-
     public User(String email, String password, String nickname, String product, String productId, UserRole role){
         this.email = email;
         this.password = password;
