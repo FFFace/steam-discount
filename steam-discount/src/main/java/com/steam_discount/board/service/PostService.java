@@ -19,13 +19,11 @@ import com.steam_discount.board.repository.PostRepository;
 import com.steam_discount.board.repository.PostThumbsRepository;
 import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
-import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserRole;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,7 +46,7 @@ public class PostService {
             new CustomException(ErrorCode.NOT_FOUND_BOARD));
 
         PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
-        Page<Post> postPage = postRepository.findByBoardId(boardId, pageRequest);
+        Page<Post> postPage = postRepository.findByBoardIdAndDisableIsNull(boardId, pageRequest);
         List<PostPageResponseDTO> postPageResponseDTOList = new ArrayList<>();
 
         postPage.get().forEach(post -> postPageResponseDTOList.add(post.toPageResponseDTO()));
@@ -58,20 +56,13 @@ public class PostService {
     }
 
 
-    public PostResponseDTO findPostByIdResponse(long id, CustomUser customUser){
+    public PostResponseDTO findPostByIdResponse(long id){
         Post post = findPostById(id);
-        PostResponseDTO postResponseDTO = post.toPostResponseDTO();
 
-        if(customUser != null){
-            User user = customUser.getUser();
-
-            Optional<PostThumbs> optionalPostThumbs = postThumbsRepository.findByPostIdAndUserId(id, user.getId());
-
-            optionalPostThumbs.ifPresent(
-                postThumbs -> postResponseDTO.setThumb(postThumbs.getThumb()));
+        if(post.getDisable() == 'T'){
+            throw new CustomException(ErrorCode.DISABLE_POST);
         }
-
-        return postResponseDTO;
+        return post.toPostResponseDTO();
     }
 
 
@@ -206,7 +197,6 @@ public class PostService {
      * @param postDTO 수정할 게시글 정보
      * @param user 로그인 한 사용자
      */
-    @Transactional
     public void updatePost(long id, PostDTO postDTO, User user){
         Post oldPost = findPostById(id);
 
@@ -222,6 +212,25 @@ public class PostService {
         postRepository.save(oldPost);
     }
 
+    public void disablePost(long id, User user){
+        Post post = findPostById(id);
+
+        if(user.getRole() != UserRole.ADMIN){
+            if(user.getId() != post.getWriter().getId()){
+                throw new CustomException(ErrorCode.NOT_MATCH_USER_FOR_UPDATE_POST);
+            }
+        }
+
+        post.isDisable();
+        postRepository.save(post);
+    }
+
+    public boolean postDisableCheck(long id){
+        Post post = findPostById(id);
+
+        return post.getDisable() == null;
+    }
+
     /**
      * id 값을 기준으로 post를 찾습니다.
      * @param id
@@ -233,7 +242,12 @@ public class PostService {
             new CustomException(ErrorCode.NOT_FOUND_POST));
     }
 
-    // NOTE: Comment 함수
+
+
+
+
+    // NOTE: ---------- Comment 함수 ----------
+
 
     /**
      * 게시글의 댓글들을 페이지 형태로 리턴 합니다.
@@ -244,7 +258,7 @@ public class PostService {
     public CommentPageResponseDTO getCommentPageResponse(long postId, int page){
         PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
 
-        Page<Comment> commentPage = commentRepository.findByPostIdAndParentIdIsNull(postId, pageRequest);
+        Page<Comment> commentPage = commentRepository.findByPostIdAndParentIdIsNullAndDisableIsNull(postId, pageRequest);
         List<CommentResponseDTO> commentResponseDTOList = new ArrayList<>();
 
         commentPage.get().forEach(comment -> commentResponseDTOList.add(comment.toResponseDTO()));
