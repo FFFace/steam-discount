@@ -47,7 +47,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User findUserById(int id) {
+    private User findUserById(int id) {
         return userRepository.findById(id).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_USER));
     }
@@ -114,6 +114,15 @@ public class UserService {
         return userRepository.findByNickname(nickname).isEmpty();
     }
 
+    public void updateNickname(String nickname, User user){
+        if(!duplicateUserNickname(nickname)){
+            throw new CustomException(ErrorCode.ALREADY_USED_NICKNAME);
+        }
+
+        user.setNickname(nickname);
+        userRepository.save(user);
+    }
+
     public void deleteUser(User user){
         userRepository.delete(user);
     }
@@ -147,6 +156,11 @@ public class UserService {
         refreshTokenRepository.delete(refreshToken);
     }
 
+
+
+
+    // NOTE: 여기서부터 Token 관련 메소드
+
     private void createNewToken(String email, HttpServletResponse response){
         String accessToken = jwtUtil.generateAccessToken(email);
 
@@ -163,8 +177,6 @@ public class UserService {
 
         saveRefreshToken(email, refreshToken);
     }
-
-    // NOTE: 여기서부터 RefreshToken 관련 메소드
 
     private void saveRefreshToken(String email, String token){
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email).orElse(new RefreshToken());

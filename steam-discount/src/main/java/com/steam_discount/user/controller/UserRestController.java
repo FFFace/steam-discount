@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,9 +35,9 @@ public class UserRestController {
         return ResponseEntity.ok(userService.findAllUsers());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@RequestParam int id){
-        return ResponseEntity.ok(userService.findUserById(id));
+    @GetMapping("/email")
+    public ResponseEntity<String> getUserEmail(@AuthenticationPrincipal CustomUser customUser){
+        return ResponseEntity.ok(customUser.getUser().getEmail());
     }
 
     @PostMapping
@@ -56,5 +58,10 @@ public class UserRestController {
     @PostMapping("/duplicate-nickname")
     public ResponseEntity<Boolean> duplicateUserNickname(@RequestBody Map<String, String> map){
         return ResponseEntity.ok(userService.duplicateUserNickname(map.get("nickname")));
+    }
+
+    @PatchMapping("/nickname")
+    public void updateUserNickname(@RequestBody Map<String, String> map, @AuthenticationPrincipal CustomUser customUser){
+        userService.updateNickname(map.get("nickname"), customUser.getUser());
     }
 }
