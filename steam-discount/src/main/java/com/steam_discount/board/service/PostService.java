@@ -59,7 +59,7 @@ public class PostService {
     public PostResponseDTO findPostByIdResponse(long id){
         Post post = findPostById(id);
 
-        if(post.getDisable() == 'T'){
+        if(post.getDisable() != null){
             throw new CustomException(ErrorCode.DISABLE_POST);
         }
         return post.toPostResponseDTO();
@@ -307,5 +307,23 @@ public class PostService {
         commentRepository.save(comment);
 
         return comment.toResponseDTO();
+    }
+
+    public void disableComment(long id, User user){
+        Comment comment = findCommentById(id);
+
+        if(user.getRole() != UserRole.ADMIN){
+            if(user.getId() != comment.getWriter().getId()){
+                throw new CustomException(ErrorCode.NOT_MATCH_USER_FOR_UPDATE_COMMENT);
+            }
+        }
+
+        comment.isDisable();
+        commentRepository.save(comment);
+    }
+
+    private Comment findCommentById(long id){
+        return commentRepository.findById(id).orElseThrow(() ->
+            new CustomException(ErrorCode.NOT_FOUND_COMMENT));
     }
 }

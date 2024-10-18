@@ -100,18 +100,23 @@ public class PostRestController {
 
     // NOTE: Comment 함수
 
-    @GetMapping("/comments")
-    public CommentPageResponseDTO getComment(@RequestParam long postId, @RequestParam(required = false, defaultValue = "0") int page){
+    @GetMapping("/{postId}/comments")
+    public CommentPageResponseDTO getComment(@PathVariable long postId, @RequestParam(required = false, defaultValue = "0") int page){
         return postService.getCommentPageResponse(postId, page);
     }
 
-    @GetMapping("/comments/reply")
-    public CommentPageResponseDTO getCommentReply(@RequestParam long parentId, @RequestParam(required = false, defaultValue = "0") int page){
+    @GetMapping("/comments/{parentId}/reply")
+    public CommentPageResponseDTO getCommentReply(@PathVariable long parentId, @RequestParam(required = false, defaultValue = "0") int page){
         return postService.getReplyCommentPageResponse(parentId, page);
     }
 
     @PostMapping("/comments")
     public CommentResponseDTO createComment(@RequestBody @Valid CommentDTO commentDTO, @AuthenticationPrincipal CustomUser customUser){
         return postService.createComment(commentDTO, customUser.getUser());
+    }
+
+    @PutMapping("/comments/disable/{id}")
+    public void disableComment(@PathVariable long id, @AuthenticationPrincipal CustomUser customUser){
+        postService.disableComment(id, customUser.getUser());
     }
 }
