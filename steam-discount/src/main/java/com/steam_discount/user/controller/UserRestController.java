@@ -3,6 +3,7 @@ package com.steam_discount.user.controller;
 
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.user.entity.Login;
+import com.steam_discount.user.entity.PasswordDTO;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserDTO;
 import com.steam_discount.user.entity.VerifyEmail;
@@ -63,5 +64,10 @@ public class UserRestController {
     @PatchMapping("/nickname")
     public void updateUserNickname(@RequestBody Map<String, String> map, @AuthenticationPrincipal CustomUser customUser){
         userService.updateNickname(map.get("nickname"), customUser.getUser());
+    }
+
+    @PatchMapping("/password")
+    public void updateUserPassword(@RequestBody @Valid PasswordDTO passwordDTO, @AuthenticationPrincipal CustomUser customUser){
+        userService.updatePassword(passwordDTO, customUser.getUser());
     }
 }

@@ -6,6 +6,7 @@ import com.steam_discount.common.security.jwt.JwtUtil;
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.common.smtp.MailService;
 import com.steam_discount.user.entity.Login;
+import com.steam_discount.user.entity.PasswordDTO;
 import com.steam_discount.user.entity.RefreshToken;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserDTO;
@@ -120,6 +121,19 @@ public class UserService {
         }
 
         user.setNickname(nickname);
+        userRepository.save(user);
+    }
+
+    public void updatePassword(PasswordDTO passwordDTO, User user){
+        if(!passwordMatch(user, passwordDTO.getOldPassword())){
+            throw new CustomException(ErrorCode.NOT_MATCH_PASSWORD);
+        } else if(!passwordDTO.getNewPassword().equals(passwordDTO.getNewPasswordValid())){
+            throw new CustomException(ErrorCode.NOT_MATCH_NEW_PASSWORD);
+        }
+
+        String newPassword = passwordEncode(passwordDTO.getNewPassword());
+        user.setPassword(newPassword);
+
         userRepository.save(user);
     }
 
