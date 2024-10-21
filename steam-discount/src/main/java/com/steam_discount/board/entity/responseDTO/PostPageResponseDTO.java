@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class PostPageResponseDTO {
     private long id;
+    private String boardName;
     private String writer;
     private String name;
     private int thumbsUp;

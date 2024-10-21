@@ -1,6 +1,7 @@
 package com.steam_discount.board.repository;
 
 import com.steam_discount.board.entity.Post;
+import com.steam_discount.user.entity.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -16,5 +17,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByBoardIdAndLimit10(long boardId, int startIndex);
 
     Page<Post> findByBoardIdAndDisableIsNull(int boardId, Pageable pageable);
+    Page<Post> findByWriterOrderByBoardIdAscIdAsc(User writer, Pageable pageable);
     Optional<Post> findFirstByBoardIdOrderByCreatedAtDesc(int boardId);
 }

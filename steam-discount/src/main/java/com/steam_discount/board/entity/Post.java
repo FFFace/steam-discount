@@ -63,6 +63,7 @@ public class Post extends BaseEntity {
         PostPageResponseDTO pageResponseDTO = new PostPageResponseDTO();
 
         pageResponseDTO.setId(id);
+        pageResponseDTO.setBoardName(board.getName());
         pageResponseDTO.setWriter(writer.getNickname());
         pageResponseDTO.setName(name);
         pageResponseDTO.setThumbsUp(thumbsUp);

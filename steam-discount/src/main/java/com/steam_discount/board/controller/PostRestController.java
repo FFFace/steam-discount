@@ -73,6 +73,11 @@ public class PostRestController {
         return ResponseEntity.ok(postService.findPostAndThumbsUpResponse(id, customUser.getUser()));
     }
 
+    @GetMapping("/writed-post-list")
+    public ResponseEntity<PostPageListResponseDTO> getWritedPostList(@RequestParam(required = false, defaultValue = "0") int page, @AuthenticationPrincipal CustomUser customUser){
+        return ResponseEntity.ok(postService.findWritedPostResponse(customUser.getUser(), page));
+    }
+
     @PostMapping("/{id}/thumbs-down")
     public ResponseEntity<PostThumbsResponseDTO> postThumbsDown(@PathVariable long id, @AuthenticationPrincipal CustomUser customUser){
         return ResponseEntity.ok(postService.findPostAndThumbsDownResponse(id, customUser.getUser()));

@@ -41,7 +41,16 @@ public class PostService {
     private final int NOTICE_BOARD_NUMBER = 1;
     private final int PAGE_SIZE = 10;
 
-    public PostPageListResponseDTO findPostListByBoardIdResponse(int boardId, int page ){
+
+    /**
+     * 특정 게시판의 게시글을 검색합니다.
+     * 게시글을 찾아 10개씩 페이지 형태와 총 페이지 갯수를 넘겨줍니다.
+     * @param boardId 검색할 게시판
+     * @param page 페이지
+     * @return PostPageListResponseDTO
+     * @exception CustomException ErrorCode.NOT_FOUND_BOARD
+     */
+    public PostPageListResponseDTO findPostListByBoardIdResponse(int boardId, int page){
         Board board = boardRepository.findById(boardId).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_BOARD));
 
@@ -50,12 +59,15 @@ public class PostService {
         List<PostPageResponseDTO> postPageResponseDTOList = new ArrayList<>();
 
         postPage.get().forEach(post -> postPageResponseDTOList.add(post.toPageResponseDTO()));
-        PostPageListResponseDTO postPageListResponseDTO = new PostPageListResponseDTO(postPageResponseDTOList, postPage.getTotalPages());
 
-        return postPageListResponseDTO;
+        return new PostPageListResponseDTO(postPageResponseDTOList, postPage.getTotalPages());
     }
 
-
+    /**
+     * 특정 게시글을 검색합니다.
+     * @param id 검색할 게시글
+     * @return PostResponseDTO
+     */
     public PostResponseDTO findPostByIdResponse(long id){
         Post post = findPostById(id);
 
@@ -65,10 +77,22 @@ public class PostService {
         return post.toPostResponseDTO();
     }
 
-
+    /**
+     * 메인 페이지에서 사용할 가장 최근 공지사항을 검색합니다.
+     * @return PostPageResponseDTO
+     */
     public PostPageResponseDTO findMainNoticePostResponse(){
         return postRepository.findFirstByBoardIdOrderByCreatedAtDesc(NOTICE_BOARD_NUMBER).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_POST)).toPageResponseDTO();
+    }
+
+    public PostPageListResponseDTO findWritedPostResponse(User user, int page){
+        PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
+        Page<Post> postPage = postRepository.findByWriterOrderByBoardIdAscIdAsc(user, pageRequest);
+        List<PostPageResponseDTO> postPageResponseDTOList = new ArrayList<>();
+
+        postPage.get().forEach(post -> postPageResponseDTOList.add(post.toPageResponseDTO()));
+        return new PostPageListResponseDTO(postPageResponseDTOList, postPage.getTotalPages());
     }
 
 
@@ -187,7 +211,6 @@ public class PostService {
         Post post = postDTO.toEntity();
         post.setWriter(user);
         post.setBoard(board);
-
         return postRepository.save(post).getId();
     }
 
