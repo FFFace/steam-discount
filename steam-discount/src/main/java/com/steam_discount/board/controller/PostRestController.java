@@ -12,6 +12,7 @@ import com.steam_discount.board.entity.responseDTO.PostThumbsResponseDTO;
 import com.steam_discount.board.service.PostService;
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -59,20 +60,31 @@ public class PostRestController {
      */
     @GetMapping("/main-notice")
     public ResponseEntity<PostPageResponseDTO> getMainNoticePost(){
-        return ResponseEntity.ok(postService.findMainNoticePostResponse());
+        return ResponseEntity.ok(postService.findNewNoticeForMain());
+    }
+
+    @GetMapping("/main-new-post-list")
+    public ResponseEntity<List<PostPageResponseDTO>> getMainNewPostList(){
+        return ResponseEntity.ok(postService.findNewPostForMain());
     }
 
     /**
      * 해당 게시글에 추천 수를 올립니다.
-     * @param id
-     * @param customUser
-     * @return
+     * @param id 해당 게시글 id
+     * @param customUser 사용자
+     * @return PostThumbsResponseDTO
      */
     @PostMapping("/{id}/thumbs-up")
     public ResponseEntity<PostThumbsResponseDTO> postThumbsUp(@PathVariable long id, @AuthenticationPrincipal CustomUser customUser){
         return ResponseEntity.ok(postService.findPostAndThumbsUpResponse(id, customUser.getUser()));
     }
 
+    /**
+     * 사용자가 작성한 게시글을 검색합니다.
+     * @param page 페이지
+     * @param customUser 사용자
+     * @return PostPageListResponseDTO
+     */
     @GetMapping("/writed-post-list")
     public ResponseEntity<PostPageListResponseDTO> getWritedPostList(@RequestParam(required = false, defaultValue = "0") int page, @AuthenticationPrincipal CustomUser customUser){
         return ResponseEntity.ok(postService.findWritedPostResponse(customUser.getUser(), page));
@@ -102,6 +114,12 @@ public class PostRestController {
     public boolean postDisableCheck(@PathVariable long id){
         return postService.postDisableCheck(id);
     }
+
+
+
+
+
+
 
     // NOTE: Comment 함수
 

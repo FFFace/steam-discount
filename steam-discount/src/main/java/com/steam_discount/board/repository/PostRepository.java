@@ -13,10 +13,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @Query(value = "select * from post where board_id=:boardId limit :startIndex, 10", nativeQuery = true)
-    List<Post> findByBoardIdAndLimit10(long boardId, int startIndex);
-
     Page<Post> findByBoardIdAndDisableIsNull(int boardId, Pageable pageable);
     Page<Post> findByWriterOrderByBoardIdAscIdAsc(User writer, Pageable pageable);
     Optional<Post> findFirstByBoardIdOrderByCreatedAtDesc(int boardId);
+    @Query(value = "select * from post where board_id != 1 and disable is null order by created_at desc limit 10", nativeQuery = true)
+    List<Post> findOrderByCreatedAtDescLimit10();
 }

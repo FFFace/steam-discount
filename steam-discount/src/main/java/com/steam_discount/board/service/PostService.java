@@ -27,6 +27,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -81,11 +83,28 @@ public class PostService {
      * 메인 페이지에서 사용할 가장 최근 공지사항을 검색합니다.
      * @return PostPageResponseDTO
      */
-    public PostPageResponseDTO findMainNoticePostResponse(){
+    public PostPageResponseDTO findNewNoticeForMain(){
         return postRepository.findFirstByBoardIdOrderByCreatedAtDesc(NOTICE_BOARD_NUMBER).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_POST)).toPageResponseDTO();
     }
 
+    public List<PostPageResponseDTO> findNewPostForMain(){
+        List<Post> postList = postRepository.findOrderByCreatedAtDescLimit10();
+        List<PostPageResponseDTO> postPageResponseDTOList = new ArrayList<>();
+
+        postList.forEach(post -> {
+            postPageResponseDTOList.add(post.toPageResponseDTO());
+        });
+
+        return postPageResponseDTOList;
+    }
+
+    /**
+     * 사용자가 작성했던 게시글을 검색합니다.
+     * @param user 검색할 사용자
+     * @param page 페이지
+     * @return PostPageListResponseDTO
+     */
     public PostPageListResponseDTO findWritedPostResponse(User user, int page){
         PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
         Page<Post> postPage = postRepository.findByWriterOrderByBoardIdAscIdAsc(user, pageRequest);
@@ -264,6 +283,7 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(()->
             new CustomException(ErrorCode.NOT_FOUND_POST));
     }
+
 
 
 
