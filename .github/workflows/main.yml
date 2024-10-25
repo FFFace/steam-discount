@@ -19,5 +19,5 @@ jobs:  #실행할 명령어
           username: ${{ secrets.USER }} # 내가 변수로 저장한 User
           script: |
             cd spring/git_hub/steam-discount
-            git pull https://github.com/FFFace/steam-discount.git
+            git pull
     
