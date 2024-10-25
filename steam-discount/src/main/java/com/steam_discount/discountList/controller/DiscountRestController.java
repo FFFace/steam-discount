@@ -15,11 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class DiscountRestController {
     private final DiscountService discountService;
 
-    @GetMapping("/test")
-    public void test(){
-        discountService.crawlingDiscountListAndSave();
-    }
-
     @GetMapping("/discount-list")
     public ResponseEntity<List<Discount>> getDiscountList(){
         return ResponseEntity.ok(discountService.findAllDiscoutList());

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -32,7 +33,17 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
             .requestMatchers("/api/logout").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
             .requestMatchers("/api/token-check").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
-            .requestMatchers("/api/posts/{id}/thumbs-up", "/api/posts/{id}/thumbs-down").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+
+
+            .requestMatchers(HttpMethod.GET,
+                "/api/users/email").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+            .requestMatchers(HttpMethod.POST,
+                "/api/boards", "/api/posts/", "/api/users").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+            .requestMatchers(HttpMethod.PUT,
+                "/api/posts/").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+            .requestMatchers(HttpMethod.PATCH,
+                "/api/users/nickname", "/api/users/password").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+
             .anyRequest().permitAll());
 
 
