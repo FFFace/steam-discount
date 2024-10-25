@@ -1,0 +1,32 @@
+name: deploy  #이름
+
+on:  # main branche가 psuh 되었을 때 실행
+  push:
+    branches:
+    - main
+
+jobs:  #실행할 명령어
+  SSH:
+    runs-on: ubuntu-latest #runner 환경
+
+    steps:
+      - uses: actions/checkout@v3  #레파지토리 참고
+      - name: ssh to ec2  #이름
+        uses: appleboy/ssh-action@master  #appleboy/ssh-action@master 사용
+        with:
+          key: ${{ secrets.SSH_KEY }} # 내가 변수로 저장한 pem key
+          host: ${{ secrets.HOST }} # 내가 변수로 저장한 ip
+          username: ${{ secrets.USER }} # 내가 변수로 저장한 User
+          script: |
+            export DB_URL=${{ secrets.DB_URL }}
+            export DB_USERNAME=${{ secrets.DB_USERNAME }}
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            export GOOGLE_SMTP_EMAIL=${{ secrets.GOOGLE_SMTP_EMAIL }}
+            export GOOGLE_SMTP_PASSWORD=${{ secrets.GOOGLE_SMTP_PASSWORD }}
+            cd spring/git_hub/steam-discount
+            git pull
+            cd steam-discount
+            bash gradlew clean build
+            cd build/libs
+            nohup java -jar steam-discount-0.0.1.jar > output.log 2>&1 &
+
