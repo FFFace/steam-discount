@@ -1,34 +1,35 @@
-name: deploy  #이름
+name: deploy
 
-on:  # main branche가 psuh 되었을 때 실행
+on:
   push:
     branches:
-    - main
+      - main
 
-jobs:  #실행할 명령어
+jobs:
   SSH:
-    runs-on: ubuntu-latest #runner 환경
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3  #레파지토리 참고
-      - name: ssh to ec2  #이름
-        uses: appleboy/ssh-action@master  #appleboy/ssh-action@master 사용
-        with:
-          key: ${{ secrets.SSH_KEY }} # 내가 변수로 저장한 pem key
-          host: ${{ secrets.HOST }} # 내가 변수로 저장한 ip
-          username: ${{ secrets.USER }} # 내가 변수로 저장한 User
-          script: |
-            export DB_URL=${{ secrets.DB_URL }}
-            export DB_USERNAME=${{ secrets.DB_USERNAME }}
-            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            export GOOGLE_SMTP_EMAIL=${{ secrets.GOOGLE_SMTP_EMAIL }}
-            export GOOGLE_SMTP_PASSWORD=${{ secrets.GOOGLE_SMTP_PASSWORD }}
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-            sudo systemctl stop steam-discount
-            
-            cd spring/git_hub/steam-discount
-            git pull
-            cd steam-discount
-            bash gradlew clean build
-            sudo systemctl start steam-discount
+    - name: SSH to EC2 and deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          echo "Stopping existing Spring application..."
+          sudo systemctl stop steam-discount
 
+          echo "Pulling latest code from repository..."
+          cd /home/ubuntu/react
+          git pull
+
+          echo "Building the application..."
+          cd steam-discount
+          bash gradlew clean build
+
+          echo "Starting the application..."
+          sudo systemctl start steam-discount
