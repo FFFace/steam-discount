@@ -7,7 +7,7 @@ on:  # main branche가 psuh 되었을 때 실행
 
 jobs:  #실행할 명령어
   SSH:
-    runs-on: ubuntu-latest  #우분투 최신버전
+    runs-on: ["self-hosted", "Linux", "X64"] #runner 환경
 
     steps:
       - uses: actions/checkout@v3  #레파지토리 참고
