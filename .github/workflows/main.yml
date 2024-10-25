@@ -21,5 +21,6 @@ jobs:  #실행할 명령어
             cd spring/git_hub/steam-discount
             git pull
             cd steam-discount
-            gradlew build
-            
+            bash gradlew clean build
+            cd build/libs
+            nohup java -jar steam-discount-0.0.1.jar &
