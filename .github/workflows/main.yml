@@ -28,4 +28,5 @@ jobs:  #실행할 명령어
             cd steam-discount
             bash gradlew clean build
             cd build/libs
-            nohup java -jar steam-discount-0.0.1.jar &
+            nohup java -jar steam-discount-0.0.1.jar > output.log 2>&1 &
+
