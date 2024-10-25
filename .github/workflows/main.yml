@@ -7,7 +7,7 @@ on:  # main branche가 psuh 되었을 때 실행
 
 jobs:  #실행할 명령어
   SSH:
-    runs-on: ["self-hosted", "Linux", "X64"] #runner 환경
+    runs-on: ubuntu-latest #runner 환경
 
     steps:
       - uses: actions/checkout@v3  #레파지토리 참고
@@ -18,6 +18,11 @@ jobs:  #실행할 명령어
           host: ${{ secrets.HOST }} # 내가 변수로 저장한 ip
           username: ${{ secrets.USER }} # 내가 변수로 저장한 User
           script: |
+            export DB_URL=${{ secrets.DB_URL }}
+            export DB_USERNAME=${{ secrets.DB_USERNAME }}
+            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            export GOOGLE_SMTP_EMAIL=${{ secrets.GOOGLE_SMTP_EMAIL }}
+            export GOOGLE_SMTP_PASSWORD=${{ secrets.GOOGLE_SMTP_PASSWORD }}
             cd spring/git_hub/steam-discount
             git pull
             cd steam-discount
