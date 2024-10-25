@@ -31,18 +31,18 @@ public class SecurityConfig {
         http.formLogin(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(authorize -> authorize
-//            .requestMatchers("/api/logout").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
-//            .requestMatchers("/api/token-check").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
-//
-//
-//            .requestMatchers(HttpMethod.GET,
-//                "/api/users/email").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
-//            .requestMatchers(HttpMethod.POST,
-//                "/api/boards", "/api/posts/", "/api/users").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
-//            .requestMatchers(HttpMethod.PUT,
-//                "/api/posts/").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
-//            .requestMatchers(HttpMethod.PATCH,
-//                "/api/users/nickname", "/api/users/password").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+            .requestMatchers("/api/logout").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+            .requestMatchers("/api/token-check").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+
+
+            .requestMatchers(HttpMethod.GET,
+                "/api/users/email").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+            .requestMatchers(HttpMethod.POST,
+                "/api/boards", "/api/posts/", "/api/users").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+            .requestMatchers(HttpMethod.PUT,
+                "/api/posts/").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+            .requestMatchers(HttpMethod.PATCH,
+                "/api/users/nickname", "/api/users/password").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
 
             .anyRequest().permitAll());
 
