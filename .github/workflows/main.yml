@@ -20,4 +20,6 @@ jobs:  #실행할 명령어
           script: |
             cd spring/git_hub/steam-discount
             git pull
-    
+            cd steam-discount
+            gradlew build
+            
