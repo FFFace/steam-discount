@@ -24,11 +24,11 @@ jobs:
           sudo systemctl stop steam-discount
 
           echo "Pulling latest code from repository..."
-          cd /home/ubuntu/react
+          cd /home/ubuntu/spring/git_hub/steam-discount
           git pull
 
           echo "Building the application..."
-          cd steam-discount
+          cd /home/ubuntu/spring/git_hub/steam-discount/steam-discount
           bash gradlew clean build
 
           echo "Starting the application..."
