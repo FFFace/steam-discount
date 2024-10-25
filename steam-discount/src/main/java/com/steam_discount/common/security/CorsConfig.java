@@ -9,13 +9,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class CorsConfig {
-
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOriginPatterns(
-            List.of("http://3.82.176.63", "http://localhost", "http://ec2-3-82-176-63.compute-1.amazonaws.com"));
+        config.setAllowedOrigins(List.of("http://3.82.176.63", "http://localhost", "http://ec2-3-82-176-63.compute-1.amazonaws.com"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization"));
@@ -24,6 +21,8 @@ public class CorsConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 }
+
