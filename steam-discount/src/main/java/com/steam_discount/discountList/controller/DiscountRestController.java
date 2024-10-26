@@ -29,6 +29,6 @@ public class DiscountRestController {
 
     @GetMapping("/new-discount")
     public void newDiscount(){
-        steamDiscountCrawling.getDiscountList();
+        discountService.crawlingDiscountListAndSave();
     }
 }
