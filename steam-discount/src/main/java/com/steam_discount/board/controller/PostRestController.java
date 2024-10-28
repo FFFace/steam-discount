@@ -95,7 +95,7 @@ public class PostRestController {
         return ResponseEntity.ok(postService.findPostAndThumbsDownResponse(id, customUser.getUser()));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public long createPost(@RequestBody @Valid PostDTO postDTO, @AuthenticationPrincipal CustomUser customUser){
         return postService.createPost(postDTO, customUser.getUser());
     }
