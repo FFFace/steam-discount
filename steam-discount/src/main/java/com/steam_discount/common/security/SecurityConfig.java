@@ -44,7 +44,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.PATCH,
                 "/api/users/nickname", "/api/users/password").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
 
-            .requestMatchers(HttpMethod.POST, "/api/posts//create").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/users/create").permitAll()
 
             .anyRequest().permitAll());
 
