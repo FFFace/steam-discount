@@ -12,7 +12,7 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("https://54.152.36.67", "http://localhost:3000", "https://ec2-54-152-36-67.compute-1.amazonaws.com"));
+        config.setAllowedOrigins(List.of("https://34.205.71.22", "http://localhost:3000", "https://steam-discount.p-e.kr"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Authorization"));
