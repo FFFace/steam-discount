@@ -36,6 +36,7 @@ public class SteamDiscountCrawling {
         options.addArguments("--disable-images");
         options.addArguments("--blink-settings=imagesEnabled=false");
         options.addArguments("--lang=ko_KR");
+        options.addArguments("--accept-language=ko-KR,ko;q=0.8,en-US;q=0.6,en;q=0.4");
 
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.MINUTES);
