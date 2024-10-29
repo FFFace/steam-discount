@@ -291,7 +291,7 @@ public class PostService {
         BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of(firebaseStorageBucket, blobName)).build();
 
         Map<String, String> extensionHeaders = new HashMap<>();
-        extensionHeaders.put("Content-Type", "image/" + contentType);
+        extensionHeaders.put("Content-Type", contentType);
 
         return storage.signUrl(
             blobInfo,
