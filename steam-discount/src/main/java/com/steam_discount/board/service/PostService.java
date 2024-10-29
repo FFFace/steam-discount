@@ -315,6 +315,18 @@ public class PostService {
         }
     }
 
+    public void deleteFirebaseImage(String blobName){
+        Blob blob = storage.get(BlobId.of(firebaseStorageBucket, "images/" + blobName));
+        if (blob != null) {
+            boolean deleted = blob.delete();
+            if (!deleted) {
+                throw new CustomException(ErrorCode.FAIL_DELETE_IMAGE);
+            }
+        } else {
+            throw new CustomException(ErrorCode.NOT_FOUNT_IMAGE);
+        }
+    }
+
     /**
      * id 값을 기준으로 post를 찾습니다.
      * @param id

@@ -22,6 +22,7 @@ public enum ErrorCode {
     NOT_MATCH_USER_FOR_UPDATE_COMMENT(403, "수정 권한 없음", "본인이 작성했던 게시글만 수정할 수 있습니다."),
     DISABLE_POST(404, "비활성화된 게시글", "해당 게시글은 비활성화된 게시글 입니다."),
     NOT_FOUNT_IMAGE(500, "이미지를 찾을 수 없음", "이미지를 찾을 수 없거나 아직 업로드 중인 이미지입니다."),
+    FAIL_DELETE_IMAGE(500, "이미지 삭제 실패", "존재하지 않는 이미지입니다."),
     NOT_FOUND_ALGORITHM(500, "알고리즘 없음", "알고리즘을 찾을 수 없습니다.");
 
     private final int errorCode;
