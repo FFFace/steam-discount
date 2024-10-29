@@ -38,3 +38,6 @@ out/
 
 ### Log ###
 .logs
+
+### FireBase ###
+firebase_service_account.json
