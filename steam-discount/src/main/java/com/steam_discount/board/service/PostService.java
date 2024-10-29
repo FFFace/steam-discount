@@ -1,6 +1,8 @@
 package com.steam_discount.board.service;
 
 
+import com.google.cloud.storage.Acl;
+import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.HttpMethod;
@@ -26,6 +28,7 @@ import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserRole;
 import jakarta.transaction.Transactional;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -293,13 +296,19 @@ public class PostService {
         Map<String, String> extensionHeaders = new HashMap<>();
         extensionHeaders.put("Content-Type", contentType);
 
-        return storage.signUrl(
+        URL signedUrl = storage.signUrl(
             blobInfo,
             5,
             TimeUnit.MINUTES,
             Storage.SignUrlOption.withExtHeaders(extensionHeaders),
             Storage.SignUrlOption.httpMethod(HttpMethod.PUT),
-            Storage.SignUrlOption.withV4Signature()).toString();
+            Storage.SignUrlOption.withV4Signature()
+        );
+
+        Blob blob = storage.get(BlobId.of(firebaseStorageBucket, blobName));
+        blob.createAcl(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
+
+        return signedUrl.toString();
     }
 
     /**
