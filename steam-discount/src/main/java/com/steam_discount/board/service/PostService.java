@@ -311,7 +311,7 @@ public class PostService {
         if (blob != null) {
             blob.createAcl(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
         } else {
-            throw new RuntimeException("Failed to retrieve Blob object");
+            throw new CustomException(ErrorCode.NOT_FOUNT_IMAGE);
         }
     }
 
