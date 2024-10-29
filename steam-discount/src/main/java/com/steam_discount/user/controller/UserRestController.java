@@ -56,7 +56,7 @@ public class UserRestController {
      * 새로운 사용자를 등록합니다.
      * @param userDTO 새로 가입할 사용자 정보
      */
-    @PostMapping
+    @PostMapping("/create")
     public void createUser(@RequestBody @Valid UserDTO userDTO){
         userService.saveNewUser(userDTO);
     }
