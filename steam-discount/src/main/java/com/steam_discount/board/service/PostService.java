@@ -241,6 +241,10 @@ public class PostService {
         Board board = boardRepository.findById(postDTO.getBoardId()).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_BOARD));
 
+        if(postDTO.getBoardId() == 1 && user.getRole() != UserRole.ADMIN){
+            throw new CustomException(ErrorCode.NO_HAVE_AUTHORITY);
+        }
+
         Post post = postDTO.toEntity();
         post.setWriter(user);
         post.setBoard(board);
