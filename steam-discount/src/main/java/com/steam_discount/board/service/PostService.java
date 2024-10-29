@@ -1,6 +1,8 @@
 package com.steam_discount.board.service;
 
 
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
 import com.steam_discount.board.entity.Board;
 import com.steam_discount.board.entity.Comment;
 import com.steam_discount.board.entity.Post;
@@ -24,7 +26,9 @@ import com.steam_discount.user.entity.UserRole;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -43,6 +47,10 @@ public class PostService {
     private final int NOTICE_BOARD_NUMBER = 1;
     private final int PAGE_SIZE = 10;
 
+    private final Storage storage;
+
+    @Value("${firebase.storage-bucket}")
+    private String firebaseStorageBucket;
 
     /**
      * 특정 게시판의 게시글을 검색합니다.
@@ -271,6 +279,13 @@ public class PostService {
         Post post = findPostById(id);
 
         return post.getDisable() == null;
+    }
+
+    public String getFirebaseUploadUrl(){
+        String blobName = "uploads/" + System.currentTimeMillis();
+        BlobInfo blobInfo = BlobInfo.newBuilder(firebaseStorageBucket, blobName).build();
+
+        return storage.signUrl(blobInfo, 5, TimeUnit.MINUTES).toString();
     }
 
     /**

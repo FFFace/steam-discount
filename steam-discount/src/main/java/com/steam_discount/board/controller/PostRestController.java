@@ -1,6 +1,9 @@
 package com.steam_discount.board.controller;
 
 
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.firebase.cloud.StorageClient;
 import com.steam_discount.board.entity.dto.CommentDTO;
 import com.steam_discount.board.entity.dto.PostDTO;
 import com.steam_discount.board.entity.responseDTO.CommentPageResponseDTO;
@@ -13,7 +16,10 @@ import com.steam_discount.board.service.PostService;
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +37,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostRestController {
 
     private final PostService postService;
-
 
     /**
      * 해당하는 게시판의 게시글을 페이지에 따라 10개 찾습니다.
@@ -111,11 +116,14 @@ public class PostRestController {
     }
 
     @GetMapping("/disable/{id}")
-    public boolean postDisableCheck(@PathVariable long id){
-        return postService.postDisableCheck(id);
+    public ResponseEntity<Boolean> postDisableCheck(@PathVariable long id){
+        return ResponseEntity.ok(postService.postDisableCheck(id));
     }
 
-
+    @GetMapping("/firebase/upload-url")
+    public ResponseEntity<String> getUploadURL(){
+        return ResponseEntity.ok(postService.getFirebaseUploadUrl());
+    }
 
 
 
