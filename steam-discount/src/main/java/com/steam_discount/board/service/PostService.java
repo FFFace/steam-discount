@@ -307,7 +307,7 @@ public class PostService {
     }
 
     public void firebaseImageMakePublic(String blobName){
-        Blob blob = storage.get(BlobId.of(firebaseStorageBucket, blobName));
+        Blob blob = storage.get(BlobId.of(firebaseStorageBucket, "images/" + blobName));
         if (blob != null) {
             blob.createAcl(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
         } else {
