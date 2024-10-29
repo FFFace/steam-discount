@@ -1,7 +1,9 @@
 package com.steam_discount.board.service;
 
 
+import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.HttpMethod;
 import com.google.cloud.storage.Storage;
 import com.steam_discount.board.entity.Board;
 import com.steam_discount.board.entity.Comment;
@@ -25,7 +27,10 @@ import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserRole;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -281,11 +286,20 @@ public class PostService {
         return post.getDisable() == null;
     }
 
-    public String getFirebaseUploadUrl(){
-        String blobName = "uploads/" + System.currentTimeMillis();
-        BlobInfo blobInfo = BlobInfo.newBuilder(firebaseStorageBucket, blobName).build();
+    public String getFirebaseUploadUrl(String contentType){
+        String blobName = "images/" + UUID.randomUUID();
+        BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of(firebaseStorageBucket, blobName)).build();
 
-        return storage.signUrl(blobInfo, 5, TimeUnit.MINUTES).toString();
+        Map<String, String> extensionHeaders = new HashMap<>();
+        extensionHeaders.put("Content-Type", "image/" + contentType);
+
+        return storage.signUrl(
+            blobInfo,
+            5,
+            TimeUnit.MINUTES,
+            Storage.SignUrlOption.withExtHeaders(extensionHeaders),
+            Storage.SignUrlOption.httpMethod(HttpMethod.PUT),
+            Storage.SignUrlOption.withV4Signature()).toString();
     }
 
     /**

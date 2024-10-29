@@ -27,14 +27,4 @@ public class FirebaseConfig {
             return StorageOptions.newBuilder().setCredentials(credentials).build().getService();
         }
     }
-
-    @PostConstruct
-    public void init() throws IOException {
-        try (FileInputStream serviceAccount = new FileInputStream(serviceAccountPath)) {
-            FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .build();
-            FirebaseApp.initializeApp(options);
-        }
-    }
 }

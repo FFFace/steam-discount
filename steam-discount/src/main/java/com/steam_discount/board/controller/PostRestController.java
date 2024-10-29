@@ -121,8 +121,8 @@ public class PostRestController {
     }
 
     @GetMapping("/firebase/upload-url")
-    public ResponseEntity<String> getUploadURL(){
-        return ResponseEntity.ok(postService.getFirebaseUploadUrl());
+    public ResponseEntity<String> getUploadURL(@RequestParam String contentType){
+        return ResponseEntity.ok(postService.getFirebaseUploadUrl(contentType));
     }
 
 
