@@ -305,9 +305,6 @@ public class PostService {
             Storage.SignUrlOption.withV4Signature()
         );
 
-        Blob blob = storage.get(BlobId.of(firebaseStorageBucket, blobName));
-        blob.createAcl(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
-
         return signedUrl.toString();
     }
 
