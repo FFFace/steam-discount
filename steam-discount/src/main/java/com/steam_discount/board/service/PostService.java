@@ -39,8 +39,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -306,6 +304,15 @@ public class PostService {
         );
 
         return signedUrl.toString();
+    }
+
+    public void firebaseImageMakePublic(String blobName){
+        Blob blob = storage.get(BlobId.of(firebaseStorageBucket, blobName));
+        if (blob != null) {
+            blob.createAcl(Acl.of(Acl.User.ofAllUsers(), Acl.Role.READER));
+        } else {
+            throw new RuntimeException("Failed to retrieve Blob object");
+        }
     }
 
     /**
