@@ -260,9 +260,10 @@ public class PostService {
     public void updatePost(long id, PostDTO postDTO, User user){
         Post oldPost = findPostById(id);
 
-        if(user.getRole() != UserRole.ADMIN){
-            if(oldPost.getWriter().getId() != user.getId())
+        if(oldPost.getWriter().getId() != user.getId()){
+            if(user.getRole() != UserRole.ADMIN){
                 throw new CustomException(ErrorCode.NOT_MATCH_USER_FOR_UPDATE_POST);
+            }
         }
 
 
@@ -275,13 +276,13 @@ public class PostService {
     public void disablePost(long id, User user){
         Post post = findPostById(id);
 
-        if(user.getRole() != UserRole.ADMIN){
-            if(user.getId() != post.getWriter().getId()){
+        if(user.getId() != post.getWriter().getId()){
+            if(user.getRole() != UserRole.ADMIN){
                 throw new CustomException(ErrorCode.NOT_MATCH_USER_FOR_UPDATE_POST);
             }
         }
 
-        post.isDisable();
+        post.disable();
         postRepository.save(post);
     }
 
@@ -413,13 +414,13 @@ public class PostService {
     public void disableComment(long id, User user){
         Comment comment = findCommentById(id);
 
-        if(user.getRole() != UserRole.ADMIN){
-            if(user.getId() != comment.getWriter().getId()){
+        if(user.getId() != comment.getWriter().getId()){
+            if(user.getRole() != UserRole.ADMIN){
                 throw new CustomException(ErrorCode.NOT_MATCH_USER_FOR_UPDATE_COMMENT);
             }
         }
 
-        comment.isDisable();
+        comment.disable();
         commentRepository.save(comment);
     }
 

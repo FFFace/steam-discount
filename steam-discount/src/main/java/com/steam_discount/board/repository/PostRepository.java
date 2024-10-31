@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByBoardIdAndDisableIsNull(int boardId, Pageable pageable);
+    Long countByBoardIdAndDisableIsNull(int boardId);
     Page<Post> findByWriterOrderByBoardIdAscIdAsc(User writer, Pageable pageable);
     Optional<Post> findFirstByBoardIdOrderByCreatedAtDesc(int boardId);
     @Query(value = "select * from post where board_id != 1 and disable is null order by created_at desc limit 10", nativeQuery = true)
