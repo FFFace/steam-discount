@@ -3,11 +3,13 @@ package com.steam_discount.user.controller;
 
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.user.entity.Login;
+import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.responseDTO.UserInfoResponseDTO;
 import com.steam_discount.user.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -36,6 +38,8 @@ public class LoginRestController {
 
     @GetMapping("/token-check")
     public UserInfoResponseDTO tokenCheck(@AuthenticationPrincipal CustomUser customUser){
-        return new UserInfoResponseDTO(customUser.getUser().getNickname(), customUser.getUser().getRole().name());
+        User user = customUser.getUser();
+        return new UserInfoResponseDTO(user.getEmail(), user.getNickname(), user.getRole().name(),
+            user.getCreatedAt().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm")), user.getDisable());
     }
 }

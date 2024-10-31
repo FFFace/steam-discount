@@ -2,6 +2,7 @@ package com.steam_discount.user.entity;
 
 
 import com.steam_discount.common.entity.BaseEntity;
+import com.steam_discount.user.entity.responseDTO.UserInfoResponseDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -62,5 +64,10 @@ public class User extends BaseEntity{
         this.productId = productId;
         this.role = role;
         verify = 'F';
+    }
+
+    public UserInfoResponseDTO toInfoResponseDTO(){
+        return new UserInfoResponseDTO(email, nickname, role.name(),
+            getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")), getDisable());
     }
 }
