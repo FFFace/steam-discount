@@ -40,9 +40,15 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST,
                 "/api/boards", "/api/posts/", "/api/users").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
             .requestMatchers(HttpMethod.PUT,
-                "/api/posts/").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+                "/api/posts/", "/api/users/disable").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
             .requestMatchers(HttpMethod.PATCH,
                 "/api/users/nickname", "/api/users/password").hasAnyRole(UserRole.USER.name(), UserRole.ADMIN.name())
+
+            .requestMatchers(HttpMethod.GET,
+                "/api/users/all").hasRole(UserRole.ADMIN.name())
+            .requestMatchers(HttpMethod.PUT,
+                "/api/users/disable/", "/api/users/enable/").hasRole(UserRole.ADMIN.name())
+
 
             .requestMatchers(HttpMethod.POST, "/api/users/create").permitAll()
 
