@@ -1,6 +1,7 @@
 package com.steam_discount.board.entity;
 
 
+import com.steam_discount.board.entity.responseDTO.AdminPageBoardInfoResponseDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,4 +26,13 @@ public class Board {
 
     @Column(unique = true)
     private String name;
+
+
+    public AdminPageBoardInfoResponseDTO toBoardInfoResponseDTO(){
+        AdminPageBoardInfoResponseDTO boardInfoResponseDTO = new AdminPageBoardInfoResponseDTO();
+        boardInfoResponseDTO.setId(id);
+        boardInfoResponseDTO.setName(name);
+
+        return boardInfoResponseDTO;
+    }
 }

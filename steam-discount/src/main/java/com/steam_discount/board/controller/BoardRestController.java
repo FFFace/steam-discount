@@ -1,6 +1,7 @@
 package com.steam_discount.board.controller;
 
 import com.steam_discount.board.entity.Board;
+import com.steam_discount.board.entity.responseDTO.AdminPageBoardInfoResponseDTO;
 import com.steam_discount.board.service.BoardService;
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import java.util.List;
@@ -27,7 +28,7 @@ public class BoardRestController {
 
 
     @GetMapping
-    public ResponseEntity<List<Board>> getBoardList(){
+    public ResponseEntity<List<AdminPageBoardInfoResponseDTO>> getBoardList(){
         return ResponseEntity.ok(boardService.findAll());
     }
 
