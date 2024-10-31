@@ -3,7 +3,6 @@ package com.steam_discount.user.service;
 import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.common.security.jwt.JwtUtil;
-import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.common.smtp.MailService;
 import com.steam_discount.user.entity.Login;
 import com.steam_discount.user.entity.PasswordDTO;
@@ -11,16 +10,19 @@ import com.steam_discount.user.entity.RefreshToken;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserDTO;
 import com.steam_discount.user.entity.UserRole;
+import com.steam_discount.user.entity.responseDTO.UserInfoResponseDTO;
 import com.steam_discount.user.repository.RefreshTokenRepository;
 import com.steam_discount.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,8 +46,13 @@ public class UserService {
         return passwordEncoder.matches(password, user.getPassword());
     }
 
-    public List<User> findAllUsers(){
-        return userRepository.findAll();
+    public List<UserInfoResponseDTO> findAllUsers(){
+        List<User> userList = userRepository.findAll();
+        List<UserInfoResponseDTO> userInfoResponseDTOList = new ArrayList<>();
+        userList.forEach(user -> {
+            userInfoResponseDTOList.add(user.toInfoResponseDTO());
+        });
+        return userInfoResponseDTOList;
     }
 
     private User findUserById(int id) {
@@ -137,8 +144,40 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void deleteUser(User user){
-        userRepository.delete(user);
+    @Transactional
+    public void disableUser(String nickname, User admin){
+        if(admin.getRole() != UserRole.ADMIN){
+            throw new CustomException(ErrorCode.NO_HAVE_AUTHORITY);
+        }
+
+        User user = userRepository.findByNickname(nickname).orElseThrow(() ->
+            new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        disableUser(user);
+    }
+
+    @Transactional
+    public void disableUser(User user){
+        user.disable();
+        userRepository.save(user);
+
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByEmail(user.getEmail());
+        if(optionalRefreshToken.isPresent()){
+            RefreshToken token = optionalRefreshToken.get();
+            refreshTokenRepository.delete(token);
+        }
+    }
+
+    public void enableUser(String nickname, User admin){
+        if(admin.getRole() != UserRole.ADMIN){
+            throw new CustomException(ErrorCode.NO_HAVE_AUTHORITY);
+        }
+
+        User user = userRepository.findByNickname(nickname).orElseThrow(() ->
+            new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        user.enable();
+        userRepository.save(user);
     }
 
     public void login(Login login, HttpServletResponse response){

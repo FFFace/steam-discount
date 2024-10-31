@@ -1,12 +1,14 @@
 package com.steam_discount.user.controller;
 
 
+import com.google.firebase.auth.UserInfo;
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.user.entity.Login;
 import com.steam_discount.user.entity.PasswordDTO;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.entity.UserDTO;
 import com.steam_discount.user.entity.VerifyEmail;
+import com.steam_discount.user.entity.responseDTO.UserInfoResponseDTO;
 import com.steam_discount.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,10 +38,10 @@ public class UserRestController {
 
     /**
      * 전체 사용자 목록을 검색합니다.
-     * @return ResponseEntity<List<User>>
+     * @return ResponseEntity<List<UserInfoResponseDTO>>
      */
-    @GetMapping
-    public ResponseEntity<List<User>> getUserList(){
+    @GetMapping("/all")
+    public ResponseEntity<List<UserInfoResponseDTO>> getUserList(){
         return ResponseEntity.ok(userService.findAllUsers());
     }
 
@@ -109,5 +112,20 @@ public class UserRestController {
     @PatchMapping("/password")
     public void updateUserPassword(@RequestBody @Valid PasswordDTO passwordDTO, @AuthenticationPrincipal CustomUser customUser){
         userService.updatePassword(passwordDTO, customUser.getUser());
+    }
+
+    @PutMapping("/disable/{nickname}")
+    public void disableUserByAdmin(@PathVariable String nickname, @AuthenticationPrincipal CustomUser customUser){
+        userService.disableUser(nickname, customUser.getUser());
+    }
+
+    @PutMapping("/disable")
+    public void disableUser(@AuthenticationPrincipal CustomUser customUser){
+        userService.disableUser(customUser.getUser());
+    }
+
+    @PutMapping("/enable/{nickname}")
+    public void enableUserByAdmin(@PathVariable String nickname, @AuthenticationPrincipal CustomUser customUser){
+        userService.enableUser(nickname, customUser.getUser());
     }
 }
