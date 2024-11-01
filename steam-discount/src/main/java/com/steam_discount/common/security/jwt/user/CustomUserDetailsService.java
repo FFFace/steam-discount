@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        if(user.getDisable() == 'T'){
+        if(user.getDisable() != null){
             throw new CustomException(ErrorCode.NO_HAVE_AUTHORITY);
         }
 
