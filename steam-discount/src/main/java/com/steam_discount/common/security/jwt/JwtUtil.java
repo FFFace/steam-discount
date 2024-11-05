@@ -3,10 +3,7 @@ package com.steam_discount.common.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.util.Base64;
-import java.util.Base64.Decoder;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import lombok.Getter;
@@ -73,7 +70,13 @@ public class JwtUtil {
         return validateToken(token, refreshKey);
     }
 
-    public boolean validateToken(String token, SecretKey secretKey) {
+    /**
+     * 토큰을 검증합니다. 토큰 검증에 성공하면 true를 반환합니다.
+     * @param token 검증할 토큰
+     * @param secretKey secretKey
+     * @return boolean
+     */
+    private boolean validateToken(String token, SecretKey secretKey) {
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
