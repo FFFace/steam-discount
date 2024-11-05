@@ -62,10 +62,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        validateUserAndTokensRefresh(cookie, response);
-    }
-
-    private void validateUserAndTokensRefresh(Cookie cookie, HttpServletResponse response){
         String email = jwtUtil.getEmailFromRefreshToken(cookie.getValue());
 
         String refreshToken = cookie.getValue();
@@ -78,6 +74,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        validateUserAndTokensRefresh(email, dbRefreshToken, response);
+    }
+
+    private void validateUserAndTokensRefresh(String email, RefreshToken dbRefreshToken, HttpServletResponse response){
         String accessToken = jwtUtil.generateAccessToken(email);
 
         String newRefreshToken = jwtUtil.generateRefreshToken(email);
