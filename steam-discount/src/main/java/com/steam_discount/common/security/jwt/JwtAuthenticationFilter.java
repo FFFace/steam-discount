@@ -1,8 +1,5 @@
 package com.steam_discount.common.security.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.steam_discount.common.exception.ResponseException;
-import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.common.security.jwt.user.CustomUserDetailsService;
 import com.steam_discount.user.entity.RefreshToken;
@@ -40,63 +37,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
         if (accessToken == null || accessToken.equals("undefined")) {
-            if(!validateRefreshToken(request, response)){
-                filterChain.doFilter(request, response);
-                return;
-            }
+            validateRefreshToken(request, response);
         }
 
-        if(!validateAccessToken(accessToken, request, response)){
-            filterChain.doFilter(request, response);
-            return;
-        }
+        validateAccessToken(accessToken, request, response);
 
         filterChain.doFilter(request, response);
     }
 
-    public void jwtExceptionHandler(HttpServletResponse response, ErrorCode errorCode) {
-        response.setStatus(errorCode.getErrorCode());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        try {
-            String json = new ObjectMapper().writeValueAsString(new ResponseException(errorCode));
-            response.getWriter().write(json);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    private boolean validateRefreshToken(HttpServletRequest request, HttpServletResponse response){
+    private void validateRefreshToken(HttpServletRequest request, HttpServletResponse response){
         Cookie[] cookies = request.getCookies();
 
         if(cookies == null){
-            return false;
+            return;
         }
 
         Cookie cookie = Arrays.stream(cookies).filter(c -> c.getName().equals("refreshToken")).findFirst().orElse(null);
 
         if(cookie == null){
-            return false;
+            return;
         }
 
         if(!jwtUtil.validateRefreshToken(cookie.getValue())){
-            return false;
+            return;
         }
 
-        return verifyRefreshTokenToken(cookie, response);
+        validateUserAndTokensRefresh(cookie, response);
     }
 
-    private boolean verifyRefreshTokenToken(Cookie cookie, HttpServletResponse response){
+    private void validateUserAndTokensRefresh(Cookie cookie, HttpServletResponse response){
         String email = jwtUtil.getEmailFromRefreshToken(cookie.getValue());
 
         String refreshToken = cookie.getValue();
         RefreshToken dbRefreshToken = refreshTokenRepository.findByEmail(email).orElse(null);
 
         if(dbRefreshToken == null){
-            return false;
+            return;
         } else if(!dbRefreshToken.getToken().equals(refreshToken)){
             refreshTokenRepository.delete(dbRefreshToken);
-            return false;
+            return;
         }
 
         String accessToken = jwtUtil.generateAccessToken(email);
@@ -114,22 +93,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         response.addCookie(newCookie);
 
-        verifyAccessToken(accessToken);
-
-        return true;
+        validateUser(accessToken);
     }
 
-    private boolean validateAccessToken(String accessToken, HttpServletRequest request,  HttpServletResponse response){
+    private void validateAccessToken(String accessToken, HttpServletRequest request,  HttpServletResponse response){
         if(!jwtUtil.validateAccessToken(accessToken)){
-            return validateRefreshToken(request, response);
+            validateRefreshToken(request, response);
         } else{
-            verifyAccessToken(accessToken);
-
-            return true;
+            validateUser(accessToken);
         }
     }
 
-    private void verifyAccessToken(String accessToken){
+    private void validateUser(String accessToken){
         String email = jwtUtil.getEmailFromAccessToken(accessToken);
 
         CustomUser user = (CustomUser) customUserDetailsService.loadUserByUsername(email);
