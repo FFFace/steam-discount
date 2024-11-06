@@ -30,6 +30,7 @@ public class MailService {
     private SimpleMailMessage createEmailForm(String toEmail, String title, String text){
         SimpleMailMessage message = new SimpleMailMessage();
 
+        message.setFrom("Steam-Discount");
         message.setTo(toEmail);
         message.setSubject(title);
         message.setText(text);
