@@ -92,6 +92,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         newCookie.setSecure(true);
 
         response.addCookie(newCookie);
+        response.setHeader(jwtUtil.getACCESS_TOKEN_HEADER_NAME(), accessToken);
 
         validateUser(accessToken);
     }
