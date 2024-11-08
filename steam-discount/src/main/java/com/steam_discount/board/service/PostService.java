@@ -292,6 +292,12 @@ public class PostService {
         return post.getDisable() == null;
     }
 
+    /**
+     * 파이어베이스 인증 정보를 바탕으로 이미지를 업로드 할 수 있는
+     * 서명된 url을 제공합니다.
+     * @param contentType
+     * @return
+     */
     public String getFirebaseUploadUrl(String contentType){
         String blobName = "images/" + UUID.randomUUID();
         BlobInfo blobInfo = BlobInfo.newBuilder(BlobId.of(firebaseStorageBucket, blobName)).build();
@@ -311,6 +317,12 @@ public class PostService {
         return signedUrl.toString();
     }
 
+    /**
+     * 서명에 인증된 url에 올리더라도 클라이언트에서는
+     * 파이어베이스 스토리지 접근 권한이 없기 때문에
+     * 이미지 요청 권한을 모든 유저에게 혀용하게 변경합니다.
+     * @param blobName
+     */
     public void firebaseImageMakePublic(String blobName){
         Blob blob = storage.get(BlobId.of(firebaseStorageBucket, "images/" + blobName));
         if (blob != null) {
@@ -320,6 +332,11 @@ public class PostService {
         }
     }
 
+    /**
+     * 파이어베이스 인증 정보를 바탕으로 이미지를 삭제할 수 있는
+     * 서명된 url을 제공합니다.
+     * @param blobName
+     */
     public void deleteFirebaseImage(String blobName){
         Blob blob = storage.get(BlobId.of(firebaseStorageBucket, "images/" + blobName));
         if (blob != null) {

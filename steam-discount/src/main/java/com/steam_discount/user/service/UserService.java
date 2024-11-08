@@ -68,8 +68,8 @@ public class UserService {
         save(user);
     }
 
-    private User save(User user){
-        return userRepository.save(user);
+    private void save(User user){
+        userRepository.save(user);
     }
 
     private String getVerifyCodeNSendCodeToEmail(UserDTO userDTO) {

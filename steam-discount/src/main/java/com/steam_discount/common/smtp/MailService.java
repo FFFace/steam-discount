@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MailService {
     private final JavaMailSender emailSender;
+    private final EmailConfig emailConfig;
 
     public void sendEmail(String toEmail, String title, String text){
         SimpleMailMessage emailForm = createEmailForm(toEmail, title, text);
@@ -30,7 +31,7 @@ public class MailService {
     private SimpleMailMessage createEmailForm(String toEmail, String title, String text){
         SimpleMailMessage message = new SimpleMailMessage();
 
-        message.setFrom("Steam-Discount");
+        message.setFrom("Steam-Discount <" + emailConfig.getUsername() + ">");
         message.setTo(toEmail);
         message.setSubject(title);
         message.setText(text);
