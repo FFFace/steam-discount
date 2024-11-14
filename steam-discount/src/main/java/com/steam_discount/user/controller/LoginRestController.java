@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,9 +38,9 @@ public class LoginRestController {
     }
 
     @GetMapping("/token-check")
-    public UserInfoResponseDTO tokenCheck(@AuthenticationPrincipal CustomUser customUser){
+    public ResponseEntity<UserInfoResponseDTO> tokenCheck(@AuthenticationPrincipal CustomUser customUser){
         User user = customUser.getUser();
-        return new UserInfoResponseDTO(user.getEmail(), user.getNickname(), user.getRole().name(),
-            user.getCreatedAt().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm")), user.getDisable());
+        return ResponseEntity.ok(new UserInfoResponseDTO(user.getEmail(), user.getNickname(), user.getRole().name(),
+            user.getCreatedAt().format(DateTimeFormatter.ofPattern("yy-MM-dd HH:mm")), user.getDisable()));
     }
 }

@@ -38,7 +38,8 @@ public class BoardRestController {
     }
 
     @PostMapping
-    public void saveBoard(@RequestBody Map<String, String> map){
+    public ResponseEntity<Void> saveBoard(@RequestBody Map<String, String> map){
         boardService.saveBoard(map.get("boardName"));
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -60,8 +61,9 @@ public class UserRestController {
      * @param userDTO 새로 가입할 사용자 정보
      */
     @PostMapping("/create")
-    public void createUser(@RequestBody @Valid UserDTO userDTO){
+    public ResponseEntity<Void> createUser(@RequestBody @Valid UserDTO userDTO){
         userService.saveNewUser(userDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**

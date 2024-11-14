@@ -14,6 +14,7 @@ import com.steam_discount.common.security.jwt.user.CustomUser;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -76,7 +77,7 @@ public class PostRestController {
      */
     @PostMapping("/{id}/thumbs-up")
     public ResponseEntity<PostThumbsResponseDTO> postThumbsUp(@PathVariable long id, @AuthenticationPrincipal CustomUser customUser){
-        return ResponseEntity.ok(postService.findPostAndThumbsUpResponse(id, customUser.getUser()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.findPostAndThumbsUpResponse(id, customUser.getUser()));
     }
 
     /**
@@ -92,12 +93,12 @@ public class PostRestController {
 
     @PostMapping("/{id}/thumbs-down")
     public ResponseEntity<PostThumbsResponseDTO> postThumbsDown(@PathVariable long id, @AuthenticationPrincipal CustomUser customUser){
-        return ResponseEntity.ok(postService.findPostAndThumbsDownResponse(id, customUser.getUser()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.findPostAndThumbsDownResponse(id, customUser.getUser()));
     }
 
     @PostMapping
-    public long createPost(@RequestBody @Valid PostDTO postDTO, @AuthenticationPrincipal CustomUser customUser){
-        return postService.createPost(postDTO, customUser.getUser());
+    public ResponseEntity<Long> createPost(@RequestBody @Valid PostDTO postDTO, @AuthenticationPrincipal CustomUser customUser){
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(postDTO, customUser.getUser()));
     }
 
     @PutMapping("/{id}")
@@ -134,18 +135,18 @@ public class PostRestController {
     // NOTE: Comment 함수
 
     @GetMapping("/{postId}/comments")
-    public CommentPageResponseDTO getComment(@PathVariable long postId, @RequestParam(required = false, defaultValue = "0") int page){
-        return postService.getCommentPageResponse(postId, page);
+    public ResponseEntity<CommentPageResponseDTO> getComment(@PathVariable long postId, @RequestParam(required = false, defaultValue = "0") int page){
+        return ResponseEntity.ok(postService.getCommentPageResponse(postId, page));
     }
 
     @GetMapping("/comments/{parentId}/reply")
-    public CommentPageResponseDTO getCommentReply(@PathVariable long parentId, @RequestParam(required = false, defaultValue = "0") int page){
-        return postService.getReplyCommentPageResponse(parentId, page);
+    public ResponseEntity<CommentPageResponseDTO> getCommentReply(@PathVariable long parentId, @RequestParam(required = false, defaultValue = "0") int page){
+        return ResponseEntity.ok(postService.getReplyCommentPageResponse(parentId, page));
     }
 
     @PostMapping("/comments")
-    public CommentResponseDTO createComment(@RequestBody @Valid CommentDTO commentDTO, @AuthenticationPrincipal CustomUser customUser){
-        return postService.createComment(commentDTO, customUser.getUser());
+    public ResponseEntity<CommentResponseDTO> createComment(@RequestBody @Valid CommentDTO commentDTO, @AuthenticationPrincipal CustomUser customUser){
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createComment(commentDTO, customUser.getUser()));
     }
 
     @PutMapping("/comments/disable/{id}")
