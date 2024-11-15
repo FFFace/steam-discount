@@ -27,9 +27,9 @@ public class SteamDiscountCrawling {
     private WebDriver driver;
     private final String url = "https://store.steampowered.com/search/?supportedlang=koreana&category1=998&specials=1&hidef2p=1&ndl=1";
 
-    @Scheduled(cron = "0 0 17 * * *")
+    @Scheduled(cron = "0 0 18 * * *")
     public List<Discount> getDiscountList() {
-        log.info("--- Crawling Steam Discount ---");
+        log.info("--- Crawling Steam Discount Start ---");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         options.addArguments("--no-sandbox");
@@ -84,7 +84,7 @@ public class SteamDiscountCrawling {
                     discount.setDiscountPercent("");
                 }
 
-
+                log.info("--- Crawling Steam Discount Update {} ---", discount.getName());
                 discountList.add(discount);
                 count++;
 
@@ -97,6 +97,7 @@ public class SteamDiscountCrawling {
 
         driver.quit();
 
+        log.info("--- Crawling Steam Discount End ---");
         return discountList;
     }
 }
