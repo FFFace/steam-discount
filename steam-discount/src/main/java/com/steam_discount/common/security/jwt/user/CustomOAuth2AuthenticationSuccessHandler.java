@@ -28,28 +28,37 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
         Authentication authentication) throws IOException, ServletException {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(auth);
-        System.out.println(auth.getPrincipal());
-        if(auth != null && auth.getPrincipal() instanceof CustomUser){
-            CustomUser customUser = (CustomUser) auth.getPrincipal();
-            String refreshToken = jwtUtil.generateRefreshToken(customUser.getUser().getEmail());
-            String accessToken = jwtUtil.generateAccessToken(customUser.getUser().getEmail());
-
-            RefreshToken dbRefreshToken = new RefreshToken(refreshToken, customUser.getUser().getEmail());
-            refreshTokenRepository.save(dbRefreshToken);
-
-            Cookie cookie = new Cookie(jwtUtil.getREFRESH_TOKEN_COOKIE_NAME(), refreshToken);
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(jwtUtil.getRefreshCookieMaxAge());
-            cookie.setSecure(true);
-
-            response.addCookie(cookie);
-            response.setHeader(jwtUtil.getACCESS_TOKEN_HEADER_NAME(), accessToken);
-
-            response.sendRedirect("/");
-        } else{
-            throw new IllegalStateException("Authentication 정보가 존재하지 않습니다.");
+        if (auth == null) {
+            throw new IllegalStateException("Authentication 객체가 null입니다.");
         }
+        if (!auth.isAuthenticated()) {
+            throw new IllegalStateException("Authentication 객체가 인증되지 않았습니다.");
+        }
+        if (!(auth.getPrincipal() instanceof CustomUser)) {
+            throw new IllegalStateException("Principal이 CustomUser가 아닙니다.");
+        }
+
+        CustomUser customUser = (CustomUser) auth.getPrincipal();
+        String email = customUser.getUser().getEmail();
+        if (email == null || email.isEmpty()) {
+            throw new IllegalStateException("사용자 이메일이 유효하지 않습니다.");
+        }
+
+        String refreshToken = jwtUtil.generateRefreshToken(email);
+        String accessToken = jwtUtil.generateAccessToken(email);
+
+        RefreshToken dbRefreshToken = new RefreshToken(refreshToken, email);
+        refreshTokenRepository.save(dbRefreshToken);
+
+        Cookie cookie = new Cookie(jwtUtil.getREFRESH_TOKEN_COOKIE_NAME(), refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(jwtUtil.getRefreshCookieMaxAge());
+        cookie.setSecure(true);
+
+        response.addCookie(cookie);
+        response.setHeader(jwtUtil.getACCESS_TOKEN_HEADER_NAME(), accessToken);
+
+        response.sendRedirect("/");
     }
 }
