@@ -31,6 +31,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         Collection<GrantedAuthority> collection = new ArrayList<>();
         collection.add(() -> user.getRole().getName());
 
+        if(user.getPassword() == null){
+            user.setPassword("DUMMY");
+        }
+
         return new CustomUser(user, collection);
     }
 }
