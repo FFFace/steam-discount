@@ -20,8 +20,9 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         script: |
-          echo "Stopping existing Spring application..."
-          sudo systemctl stop steam-discount
+          echo "Stop and Remove Spring Docker Container..."
+          docker stop steam-discount
+          docker rm steam-discount
 
           echo "Pulling latest code from repository..."
           cd /home/ubuntu/spring/git_hub/steam-discount
@@ -31,5 +32,9 @@ jobs:
           cd /home/ubuntu/spring/git_hub/steam-discount/steam-discount
           bash gradlew clean build
 
-          echo "Starting the application..."
-          sudo systemctl start steam-discount
+          echo "Building Dockerfile..."
+          cd /home/ubuntu
+          docker build -f Dockerfile.server -t ubuntu:server .
+
+          echo "Starting Spring Docker Container..."
+          docker run -d --name steam-discount -p 8443:8443 --env-file .env ubuntu:server
