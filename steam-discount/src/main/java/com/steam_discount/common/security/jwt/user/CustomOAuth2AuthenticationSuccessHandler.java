@@ -28,7 +28,7 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
 
-        if(authentication instanceof CustomOAuth2User customOAuth2User){
+        if(authentication.getPrincipal() instanceof CustomOAuth2User customOAuth2User){
             User user = customOAuth2User.getUser();
             String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
             String accessToken = jwtUtil.generateAccessToken(user.getEmail());
