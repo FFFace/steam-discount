@@ -37,4 +37,4 @@ jobs:
           docker build -f Dockerfile.server -t ubuntu:server .
 
           echo "Starting Spring Docker Container..."
-          docker run -d --name steam-discount -p 8443:8443 --env-file .env ubuntu:server
+          docker run -d --name steam-discount -p 8443:8443 --network my-network --env-file .env ubuntu:server
