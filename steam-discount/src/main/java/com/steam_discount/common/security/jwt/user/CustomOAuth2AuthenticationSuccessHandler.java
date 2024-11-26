@@ -4,6 +4,7 @@ import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.common.security.jwt.JwtUtil;
 import com.steam_discount.user.entity.RefreshToken;
+import com.steam_discount.user.entity.User;
 import com.steam_discount.user.repository.RefreshTokenRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -27,38 +28,26 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
-            throw new IllegalStateException("Authentication 객체가 null입니다.");
+        if(authentication instanceof CustomOAuth2User customOAuth2User){
+            User user = customOAuth2User.getUser();
+            String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
+            String accessToken = jwtUtil.generateAccessToken(user.getEmail());
+
+            RefreshToken dbRefreshToken = new RefreshToken(refreshToken, user.getEmail());
+            refreshTokenRepository.save(dbRefreshToken);
+
+            Cookie cookie = new Cookie(jwtUtil.getREFRESH_TOKEN_COOKIE_NAME(), refreshToken);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(jwtUtil.getRefreshCookieMaxAge());
+            cookie.setSecure(true);
+
+            response.addCookie(cookie);
+            response.setHeader(jwtUtil.getACCESS_TOKEN_HEADER_NAME(), accessToken);
+
+            response.sendRedirect("/");
+        } else{
+            throw new IllegalStateException("Authentication 정보가 존재하지 않습니다.");
         }
-        if (!auth.isAuthenticated()) {
-            throw new IllegalStateException("Authentication 객체가 인증되지 않았습니다.");
-        }
-        if (!(auth.getPrincipal() instanceof CustomUser)) {
-            throw new IllegalStateException("Principal이 CustomUser가 아닙니다.");
-        }
-
-        CustomUser customUser = (CustomUser) auth.getPrincipal();
-        String email = customUser.getUser().getEmail();
-        if (email == null || email.isEmpty()) {
-            throw new IllegalStateException("사용자 이메일이 유효하지 않습니다.");
-        }
-
-        String refreshToken = jwtUtil.generateRefreshToken(email);
-        String accessToken = jwtUtil.generateAccessToken(email);
-
-        RefreshToken dbRefreshToken = new RefreshToken(refreshToken, email);
-        refreshTokenRepository.save(dbRefreshToken);
-
-        Cookie cookie = new Cookie(jwtUtil.getREFRESH_TOKEN_COOKIE_NAME(), refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(jwtUtil.getRefreshCookieMaxAge());
-        cookie.setSecure(true);
-
-        response.addCookie(cookie);
-        response.setHeader(jwtUtil.getACCESS_TOKEN_HEADER_NAME(), accessToken);
-
-        response.sendRedirect("/");
     }
 }
