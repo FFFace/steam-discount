@@ -43,6 +43,8 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
 
             response.addCookie(cookie);
             response.setHeader(jwtUtil.getACCESS_TOKEN_HEADER_NAME(), accessToken);
+
+            response.sendRedirect("/");
         } else{
             throw new IllegalStateException("Authentication 정보가 존재하지 않습니다.");
         }

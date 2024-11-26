@@ -50,6 +50,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         CustomUser customUser = (CustomUser) customUserDetailsService.loadUserByUsername(oAuth2User.getAttribute("email"));
+        customUser.getUser().setPassword("DUMMY");
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
             customUser, null, List.of(new SimpleGrantedAuthority(customUser.getUser().getRole().getName())));
 
