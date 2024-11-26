@@ -2,6 +2,8 @@ package com.steam_discount.common.security;
 
 
 import com.steam_discount.common.security.jwt.JwtAuthenticationFilter;
+import com.steam_discount.common.security.jwt.user.CustomAuthenticationEntryPoint;
+import com.steam_discount.common.security.jwt.user.CustomOAuth2AuthenticationSuccessHandler;
 import com.steam_discount.common.security.jwt.user.CustomOAuth2UserService;
 import com.steam_discount.user.entity.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class SecurityConfig {
     private final CorsConfig corsConfig;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain SecurityFilterChain(HttpSecurity http) throws Exception {
@@ -59,7 +62,9 @@ public class SecurityConfig {
             .anyRequest().permitAll());
 
         http.oauth2Login(oauth2 -> oauth2
-            .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService)));
+            .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOAuth2UserService)))
+            .exceptionHandling(exceptionHandling -> exceptionHandling
+                .authenticationEntryPoint(customAuthenticationEntryPoint));
 
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
