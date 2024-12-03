@@ -57,6 +57,9 @@ public class RefreshTokenService {
             throw new CustomException(ErrorCode.NOT_FOUND_USER);
         }
 
+        Optional<RefreshToken> existingToken = refreshTokenRepository.findByEmail(email);
+        existingToken.ifPresent(this::deleteRefreshToken);
+
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email).orElse(new RefreshToken());
         refreshToken.setEmail(email);
         refreshToken.setToken(token);
