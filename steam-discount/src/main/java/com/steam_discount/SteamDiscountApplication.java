@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 @EnableScheduling
+@EnableRetry
 public class SteamDiscountApplication {
 
 	public static void main(String[] args) {
