@@ -36,8 +36,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String providerId = provider + "_" + oAuth2User.getAttribute("sub");
 
         Optional<User> optionalUser = userRepository.findByProductId(providerId);
+        User user = new User();
         if(optionalUser.isEmpty()){
-            User user = new User();
             user.setEmail(oAuth2User.getAttribute("email"));
             user.setNickname(oAuth2User.getAttribute("name"));
             user.setProduct(provider);
@@ -47,15 +47,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.enable();
 
             userRepository.save(user);
+        } else{
+            user = optionalUser.get();
         }
 
-        CustomUser customUser = (CustomUser) customUserDetailsService.loadUserByUsername(oAuth2User.getAttribute("email"));
-        customUser.getUser().setPassword("DUMMY");
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-            customUser, null, List.of(new SimpleGrantedAuthority(customUser.getUser().getRole().getName())));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        return new CustomOAuth2User(customUser.getUser(), oAuth2User.getAttributes());
+        return new CustomOAuth2User(user, oAuth2User.getAttributes());
     }
 }

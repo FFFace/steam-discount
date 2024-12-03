@@ -160,13 +160,13 @@ public class PostService {
                 postThumbsResponseDTO.setThumbsDown(post.getThumbsDown()-1);
             }
         } else{
-            PostThumbs newPostThumbs = new PostThumbs();
+            postThumbs = new PostThumbs();
             Post post = findPostById(id);
-            newPostThumbs.setPost(post);
-            newPostThumbs.setThumb('U');
-            newPostThumbs.setUserId(user.getId());
+            postThumbs.setPost(post);
+            postThumbs.setThumb('U');
+            postThumbs.setUserId(user.getId());
 
-            postThumbsSave(newPostThumbs);
+            postThumbsSave(postThumbs);
 
             postThumbsResponseDTO.setThumbsUp(post.getThumbsUp()+1);
             postThumbsResponseDTO.setThumbsDown(post.getThumbsDown());

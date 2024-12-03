@@ -4,6 +4,7 @@ import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.common.security.jwt.JwtUtil;
 import com.steam_discount.common.smtp.MailService;
+import com.steam_discount.refreshToken.service.RefreshTokenService;
 import com.steam_discount.user.entity.Login;
 import com.steam_discount.user.entity.PasswordDTO;
 import com.steam_discount.user.entity.RefreshToken;
@@ -32,7 +33,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
     private final JwtUtil jwtUtil;
 
     private final MailService mailService;
@@ -161,10 +162,10 @@ public class UserService {
         user.disable();
         userRepository.save(user);
 
-        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByEmail(user.getEmail());
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenService.findByEmailOptional(user.getEmail());
         if(optionalRefreshToken.isPresent()){
             RefreshToken token = optionalRefreshToken.get();
-            refreshTokenRepository.delete(token);
+            refreshTokenService.deleteRefreshToken(token);
         }
     }
 
@@ -195,8 +196,7 @@ public class UserService {
     }
 
     public void logout(User user, HttpServletResponse response){
-        RefreshToken refreshToken = refreshTokenRepository.findByEmail(user.getEmail()).orElseThrow(()->
-            new CustomException(ErrorCode.NOT_FOUND_REFRESH_TOKEN));
+        RefreshToken refreshToken = refreshTokenService.findByEmail(user.getEmail());
 
         Cookie cookie = new Cookie(jwtUtil.getREFRESH_TOKEN_COOKIE_NAME(), null);
         cookie.setHttpOnly(true);
@@ -206,7 +206,7 @@ public class UserService {
 
         response.addCookie(cookie);
 
-        refreshTokenRepository.delete(refreshToken);
+        refreshTokenService.deleteRefreshToken(refreshToken);
     }
 
 
@@ -231,11 +231,7 @@ public class UserService {
         saveRefreshToken(email, refreshToken);
     }
 
-    private void saveRefreshToken(String email, String token){
-        RefreshToken refreshToken = refreshTokenRepository.findByEmail(email).orElse(new RefreshToken());
-        refreshToken.setEmail(email);
-        refreshToken.setToken(token);
-
-        refreshTokenRepository.save(refreshToken);
+    private void saveRefreshToken(String token, String email){
+        refreshTokenService.saveRefreshToken(token, email);
     }
 }
