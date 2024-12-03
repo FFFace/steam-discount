@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteRefreshToken(RefreshToken refreshToken) {
         refreshTokenRepository.delete(refreshToken);
     }
