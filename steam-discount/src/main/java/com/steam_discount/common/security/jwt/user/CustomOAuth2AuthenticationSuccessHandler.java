@@ -3,6 +3,7 @@ package com.steam_discount.common.security.jwt.user;
 import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.common.security.jwt.JwtUtil;
+import com.steam_discount.refreshToken.service.RefreshTokenService;
 import com.steam_discount.user.entity.RefreshToken;
 import com.steam_discount.user.entity.User;
 import com.steam_discount.user.repository.RefreshTokenRepository;
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Component;
 public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -34,7 +35,7 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
             String accessToken = jwtUtil.generateAccessToken(user.getEmail());
 
             RefreshToken dbRefreshToken = new RefreshToken(refreshToken, user.getEmail());
-            refreshTokenRepository.save(dbRefreshToken);
+            refreshTokenService.saveRefreshToken(dbRefreshToken);
 
             Cookie cookie = new Cookie(jwtUtil.getREFRESH_TOKEN_COOKIE_NAME(), refreshToken);
             cookie.setHttpOnly(true);
