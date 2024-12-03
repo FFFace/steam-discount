@@ -22,34 +22,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
 
-    @Transactional
-    @Retryable(value = {ObjectOptimisticLockingFailureException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public void deleteRefreshToken(RefreshToken refreshToken) {
         refreshTokenRepository.delete(refreshToken);
     }
 
-    @Recover
-    public void recover(CannotAcquireLockException e) {
-        log.error("RefreshTokenService Retry failed after 3 attempts", e);
-    }
-
-    @Transactional
     public RefreshToken findByEmail(String email) {
         return refreshTokenRepository.findByEmail(email).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_REFRESH_TOKEN));
     }
 
-    @Transactional
     public RefreshToken findByEmailOrNull(String email) {
         return refreshTokenRepository.findByEmail(email).orElse(null);
     }
 
-    @Transactional
     public Optional<RefreshToken> findByEmailOptional(String email){
         return refreshTokenRepository.findByEmail(email);
     }
 
-    @Transactional
     public void saveRefreshToken(String token, String email){
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email).orElse(new RefreshToken());
         refreshToken.setEmail(email);
@@ -58,7 +47,6 @@ public class RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
     }
 
-    @Transactional
     public void saveRefreshToken(RefreshToken refreshToken){
         refreshTokenRepository.save(refreshToken);
     }
