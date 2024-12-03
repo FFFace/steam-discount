@@ -25,14 +25,8 @@ public class RefreshTokenService {
     private final UserRepository userRepository;
 
     @Transactional
-    @Retryable(value = {ObjectOptimisticLockingFailureException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     public void deleteRefreshToken(RefreshToken refreshToken) {
         refreshTokenRepository.delete(refreshToken);
-    }
-
-    @Recover
-    public void recover(ObjectOptimisticLockingFailureException e) {
-        log.error("RefreshTokenService Retry failed after 3 attempts", e);
     }
 
     @Transactional
@@ -53,13 +47,6 @@ public class RefreshTokenService {
 
     @Transactional
     public void saveRefreshToken(String token, String email){
-        if (!userRepository.existsByEmail(email)) {
-            throw new CustomException(ErrorCode.NOT_FOUND_USER);
-        }
-
-        Optional<RefreshToken> existingToken = refreshTokenRepository.findByEmail(email);
-        existingToken.ifPresent(this::deleteRefreshToken);
-
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email).orElse(new RefreshToken());
         refreshToken.setEmail(email);
         refreshToken.setToken(token);
