@@ -4,6 +4,7 @@ import com.steam_discount.common.exception.CustomException;
 import com.steam_discount.common.exception.errorCode.ErrorCode;
 import com.steam_discount.user.entity.RefreshToken;
 import com.steam_discount.user.repository.RefreshTokenRepository;
+import com.steam_discount.user.repository.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Retryable(value = {ObjectOptimisticLockingFailureException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
@@ -51,6 +53,10 @@ public class RefreshTokenService {
 
     @Transactional
     public void saveRefreshToken(String token, String email){
+        if (!userRepository.existsByEmail(email)) {
+            throw new CustomException(ErrorCode.NOT_FOUND_USER);
+        }
+
         RefreshToken refreshToken = refreshTokenRepository.findByEmail(email).orElse(new RefreshToken());
         refreshToken.setEmail(email);
         refreshToken.setToken(token);
@@ -60,6 +66,10 @@ public class RefreshTokenService {
 
     @Transactional
     public void saveRefreshToken(RefreshToken refreshToken){
+        if (!userRepository.existsByEmail(refreshToken.getEmail())) {
+            throw new CustomException(ErrorCode.NOT_FOUND_USER);
+        }
+
         refreshTokenRepository.save(refreshToken);
     }
 }
