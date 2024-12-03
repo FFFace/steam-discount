@@ -228,7 +228,7 @@ public class UserService {
 
         response.addCookie(cookie);
 
-        saveRefreshToken(email, refreshToken);
+        saveRefreshToken(refreshToken, email);
     }
 
     private void saveRefreshToken(String token, String email){
