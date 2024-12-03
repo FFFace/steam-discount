@@ -40,6 +40,9 @@ dependencies {
 	testImplementation("org.springframework.security:spring-security-test")
 	implementation("org.seleniumhq.selenium:selenium-java:4.26.0")
 	implementation("com.google.firebase:firebase-admin:9.4.1")
+	implementation ("org.springframework.retry:spring-retry:1.3.1")
+	implementation ("org.springframework.retry:spring-aspects:1.3.1")
+
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
