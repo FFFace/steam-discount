@@ -2,7 +2,6 @@ package com.steam_discount.common.security.jwt;
 
 import com.steam_discount.common.security.jwt.user.CustomUser;
 import com.steam_discount.common.security.jwt.user.CustomUserDetailsService;
-import com.steam_discount.refreshToken.service.RefreshTokenService;
 import com.steam_discount.user.entity.RefreshToken;
 import com.steam_discount.user.repository.RefreshTokenRepository;
 import jakarta.servlet.FilterChain;
@@ -29,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
-    private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -66,12 +65,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String email = jwtUtil.getEmailFromRefreshToken(cookie.getValue());
 
         String refreshToken = cookie.getValue();
-        RefreshToken dbRefreshToken = refreshTokenService.findByEmailOrNull(email);
+        RefreshToken dbRefreshToken = refreshTokenRepository.findByEmail(email).orElse(null);
 
         if(dbRefreshToken == null){
             return;
         } else if(!dbRefreshToken.getToken().equals(refreshToken)){
-            refreshTokenService.deleteRefreshToken(dbRefreshToken);
+            refreshTokenRepository.delete(dbRefreshToken);
             return;
         }
 
@@ -84,7 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String newRefreshToken = jwtUtil.generateRefreshToken(email);
 
         dbRefreshToken.setToken(newRefreshToken);
-        refreshTokenService.saveRefreshToken(dbRefreshToken);
+        refreshTokenRepository.save(dbRefreshToken);
 
         Cookie newCookie = new Cookie(jwtUtil.getREFRESH_TOKEN_COOKIE_NAME(), newRefreshToken);
         newCookie.setHttpOnly(true);
