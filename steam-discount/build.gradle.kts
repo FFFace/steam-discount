@@ -38,7 +38,7 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
-	implementation("org.seleniumhq.selenium:selenium-java:4.26.0")
+	implementation("org.seleniumhq.selenium:selenium-java:4.27.0")
 	implementation("com.google.firebase:firebase-admin:9.4.1")
 	implementation("org.springframework.retry:spring-retry:2.0.10")
 	implementation("org.springframework:spring-aspects:6.2.0")
