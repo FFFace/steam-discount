@@ -4,7 +4,9 @@ import com.steam_discount.common.crawling.SteamDiscountCrawling;
 import com.steam_discount.discountList.entity.Discount;
 import com.steam_discount.discountList.service.DiscountService;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +21,13 @@ public class DiscountRestController {
 
     @GetMapping("/discount-list")
     public ResponseEntity<List<Discount>> getDiscountList(){
-        return ResponseEntity.ok(discountService.findAllDiscoutList());
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES)).body(discountService.findAllDiscoutList());
+//        return ResponseEntity.ok(discountService.findAllDiscoutList());
     }
 
     @GetMapping("/discount-five")
     public ResponseEntity<List<Discount>> getDiscountFive(){
-        return ResponseEntity.ok(discountService.findRandomFive());
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES)).body(discountService.findRandomFive());
     }
 
     @GetMapping("/new-discount")
