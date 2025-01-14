@@ -1,6 +1,7 @@
 package com.steam_discount.board.controller;
 
 
+import com.steam_discount.board.entity.Post;
 import com.steam_discount.board.entity.dto.CommentDTO;
 import com.steam_discount.board.entity.dto.PostDTO;
 import com.steam_discount.board.entity.responseDTO.CommentPageResponseDTO;
@@ -152,5 +153,10 @@ public class PostRestController {
     @PutMapping("/comments/disable/{id}")
     public void disableComment(@PathVariable long id, @AuthenticationPrincipal CustomUser customUser){
         postService.disableComment(id, customUser.getUser());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<PostResponseDTO>> getSearchPosts(@RequestParam String contain){
+        return ResponseEntity.ok(postService.findSearchPosts(contain));
     }
 }

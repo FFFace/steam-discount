@@ -58,7 +58,7 @@ public class SecurityConfig {
                 "/api/users/disable/", "/api/users/enable/").hasRole(UserRole.ADMIN.name())
 
 
-            .requestMatchers(HttpMethod.POST, "/api/users/create").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/users/create", "/api/posts/search").permitAll()
 
             .anyRequest().permitAll());
 

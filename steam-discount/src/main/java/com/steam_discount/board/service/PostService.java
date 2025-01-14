@@ -71,7 +71,7 @@ public class PostService {
             new CustomException(ErrorCode.NOT_FOUND_BOARD));
 
         PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
-        Page<Post> postPage = postRepository.findByBoardIdAndDisableIsNull(boardId, pageRequest);
+        Page<Post> postPage = postRepository.findByBoardIdAndDisableIsNullOrderByCreatedAtAsc(boardId, pageRequest);
         List<PostPageResponseDTO> postPageResponseDTOList = new ArrayList<>();
 
         postPage.get().forEach(post -> postPageResponseDTOList.add(post.toPageResponseDTO()));
@@ -98,7 +98,7 @@ public class PostService {
      * @return PostPageResponseDTO
      */
     public PostPageResponseDTO findNewNoticeForMain(){
-        return postRepository.findFirstByBoardIdOrderByCreatedAtDesc(NOTICE_BOARD_NUMBER).orElseThrow(() ->
+        return postRepository.findFirstByBoardIdOrderByCreatedAtAsc(NOTICE_BOARD_NUMBER).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_POST)).toPageResponseDTO();
     }
 
@@ -444,5 +444,15 @@ public class PostService {
     private Comment findCommentById(long id){
         return commentRepository.findById(id).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_COMMENT));
+    }
+
+    public List<PostResponseDTO> findSearchPosts(String contain){
+        List<Post> posts = postRepository.findByNameContainingOrderByCreatedAtAsc(contain);
+        List<PostResponseDTO> postResponseDTOList = new ArrayList<>();
+        posts.forEach(post -> {
+            postResponseDTOList.add(post.toPostResponseDTO());
+        });
+
+        return postResponseDTOList;
     }
 }
