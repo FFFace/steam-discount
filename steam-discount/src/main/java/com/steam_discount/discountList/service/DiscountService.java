@@ -4,10 +4,10 @@ package com.steam_discount.discountList.service;
 import com.steam_discount.common.crawling.SteamDiscountCrawling;
 import com.steam_discount.discountList.entity.Discount;
 import com.steam_discount.discountList.repository.DiscountRepository;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
