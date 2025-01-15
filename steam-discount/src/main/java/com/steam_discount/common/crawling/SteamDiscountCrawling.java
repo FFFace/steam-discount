@@ -71,21 +71,21 @@ public class SteamDiscountCrawling {
                 try{
                     WebElement originPrice = element.findElement(By.className("discount_original_price"));
                     discount.setOriginPrice(originPrice.getText());
-                } catch (NoSuchElementException e){
+                } catch (Exception e){
                     discount.setOriginPrice("");
                 }
 
                 try{
                     WebElement discountPrice = element.findElement(By.className("discount_final_price"));
                     discount.setDiscountPrice(discountPrice.getText());
-                } catch (NoSuchElementException e){
+                } catch (Exception e){
                     discount.setDiscountPrice("");
                 }
 
                 try{
                     WebElement discountPct = element.findElement(By.className("discount_pct"));
                     discount.setDiscountPercent(discountPct.getText());
-                } catch (NoSuchElementException e){
+                } catch (Exception e){
                     discount.setDiscountPercent("");
                 }
 
