@@ -71,7 +71,7 @@ public class PostService {
             new CustomException(ErrorCode.NOT_FOUND_BOARD));
 
         PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
-        Page<Post> postPage = postRepository.findByBoardIdAndDisableIsNullOrderByCreatedAtAsc(boardId, pageRequest);
+        Page<Post> postPage = postRepository.findByBoardIdAndDisableIsNullOrderByCreatedAtDesc(boardId, pageRequest);
         List<PostPageResponseDTO> postPageResponseDTOList = new ArrayList<>();
 
         postPage.get().forEach(post -> postPageResponseDTOList.add(post.toPageResponseDTO()));
@@ -98,7 +98,7 @@ public class PostService {
      * @return PostPageResponseDTO
      */
     public PostPageResponseDTO findNewNoticeForMain(){
-        return postRepository.findFirstByBoardIdOrderByCreatedAtAsc(NOTICE_BOARD_NUMBER).orElseThrow(() ->
+        return postRepository.findFirstByBoardIdOrderByCreatedAtDesc(NOTICE_BOARD_NUMBER).orElseThrow(() ->
             new CustomException(ErrorCode.NOT_FOUND_POST)).toPageResponseDTO();
     }
 
@@ -121,7 +121,7 @@ public class PostService {
      */
     public PostPageListResponseDTO findWritedPostResponse(User user, int page){
         PageRequest pageRequest = PageRequest.of(page, PAGE_SIZE);
-        Page<Post> postPage = postRepository.findByWriterOrderByBoardIdAscIdAsc(user, pageRequest);
+        Page<Post> postPage = postRepository.findByWriterOrderByBoardIdAscIdDesc(user, pageRequest);
         List<PostPageResponseDTO> postPageResponseDTOList = new ArrayList<>();
 
         postPage.get().forEach(post -> postPageResponseDTOList.add(post.toPageResponseDTO()));
@@ -447,7 +447,7 @@ public class PostService {
     }
 
     public List<PostResponseDTO> findSearchPosts(String contain){
-        List<Post> posts = postRepository.findByNameContainingOrderByCreatedAtAsc(contain);
+        List<Post> posts = postRepository.findByNameContainingOrderByCreatedAtDesc(contain);
         List<PostResponseDTO> postResponseDTOList = new ArrayList<>();
         posts.forEach(post -> {
             postResponseDTOList.add(post.toPostResponseDTO());
