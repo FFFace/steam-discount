@@ -54,7 +54,7 @@ public class SteamDiscountCrawling {
         try{
             driver.get(url);
             new Actions(driver).sendKeys(Keys.END).perform();
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofMinutes(1));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
             Thread.sleep(2000);
             List<WebElement> list = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.className("search_result_row")));
 
