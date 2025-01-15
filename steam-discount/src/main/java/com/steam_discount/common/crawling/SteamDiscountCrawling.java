@@ -5,6 +5,7 @@ import com.steam_discount.discountList.entity.Discount;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -66,21 +67,25 @@ public class SteamDiscountCrawling {
                 discount.setLink(element.getAttribute("href"));
                 discount.setName(element.findElement(By.className("title")).getText());
                 discount.setImage(element.findElement(By.tagName("img")).getAttribute("src"));
+
                 try{
-                    discount.setOriginPrice(element.findElement(By.className("discount_original_price")).getText());
-                } catch (Exception e){
+                    WebElement originPrice = element.findElement(By.className("discount_original_price"));
+                    discount.setOriginPrice(originPrice.getText());
+                } catch (NoSuchElementException e){
                     discount.setOriginPrice("");
                 }
 
                 try{
-                    discount.setDiscountPrice(element.findElement(By.className("discount_final_price")).getText());
-                } catch (Exception e){
+                    WebElement discountPrice = element.findElement(By.className("discount_final_price"));
+                    discount.setDiscountPrice(discountPrice.getText());
+                } catch (NoSuchElementException e){
                     discount.setDiscountPrice("");
                 }
 
                 try{
-                    discount.setDiscountPercent(element.findElement(By.className("discount_pct")).getText());
-                } catch (Exception e){
+                    WebElement discountPct = element.findElement(By.className("discount_pct"));
+                    discount.setDiscountPercent(discountPct.getText());
+                } catch (NoSuchElementException e){
                     discount.setDiscountPercent("");
                 }
 
