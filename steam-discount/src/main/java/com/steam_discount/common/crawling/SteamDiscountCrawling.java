@@ -28,7 +28,7 @@ public class SteamDiscountCrawling {
     private WebDriver driver;
     private final String url = "https://store.steampowered.com/search/?supportedlang=koreana&category1=998&specials=1&hidef2p=1&ndl=1";
 
-    @Scheduled(cron = "0 0 18 * * *")
+    @Scheduled(cron = "0 5 10 * * *", zone = "America/Los_Angeles")
     public List<Discount> getDiscountList() {
         log.info("--- Crawling Steam Discount Start ---");
         ChromeOptions options = new ChromeOptions();
