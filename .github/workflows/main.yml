@@ -7,7 +7,7 @@ on:
 
 jobs:
   SSH:
-    runs-on: ubuntu-latest
+    runs-on: ubuntuL24.04
 
     steps:
     - name: Checkout repository
