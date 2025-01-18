@@ -51,7 +51,7 @@ public class PostService {
     private final PostThumbsRepository postThumbsRepository;
 
     private final int NOTICE_BOARD_NUMBER = 1;
-    private final int PAGE_SIZE = 10;
+    private final int PAGE_SIZE = 50;
 
     private final Storage storage;
 
