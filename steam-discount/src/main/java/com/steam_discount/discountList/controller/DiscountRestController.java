@@ -21,8 +21,8 @@ public class DiscountRestController {
 
     @GetMapping("/discount-list")
     public ResponseEntity<List<Discount>> getDiscountList(){
-//        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES)).body(discountService.findAllDiscoutList());
-        return ResponseEntity.ok(discountService.findAllDiscoutList());
+        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES)).body(discountService.findAllDiscoutList());
+//        return ResponseEntity.ok(discountService.findAllDiscoutList());
     }
 
     @GetMapping("/discount-five")
