@@ -54,7 +54,7 @@ public class Post extends BaseEntity {
     @Column
     private int thumbsDown;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY)
     private List<Comment> commentList;
 
 
